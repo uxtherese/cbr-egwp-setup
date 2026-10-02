@@ -280,8 +280,6 @@
     .pg-btn { width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; color:var(--text-primary); font-size:14px; border-radius:4px; padding:0; }
     .pg-btn img { width:14px; height:14px; display:block; }
     .pg-btn:disabled { cursor:default; }
-    .pg-btn:not(:disabled):hover { background: #013F7C; color: #fff; }
-    .pg-btn:not(:disabled):hover img { filter: brightness(0) invert(1); }
 
     /* Side tabs */
     .side-tabs { display: flex; flex-direction: column; background: var(--table-header-bg); border-left: 1px solid var(--table-border); flex-shrink: 0; width: 32px; }
@@ -3528,7 +3526,7 @@
     out += '<div class="as-pager-row">';
     out += '<span>Page size:</span>';
     out += '<select class="as-ps-select" onchange="_asSetPageSize(\'' + ar + '\',parseInt(this.value))">';
-    [10, 25, 50].forEach(function(n) {
+    [10, 20, 50, 100].forEach(function(n) {
       out += '<option value="' + n + '"' + (pageSize === n ? ' selected' : '') + '>' + n + '</option>';
     });
     out += '</select>';
