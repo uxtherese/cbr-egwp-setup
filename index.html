@@ -3221,6 +3221,7 @@
   // ── AR SETUP FIELDS ──────────────────────────────────────────────────────────
   // ── AR SETUP RENDERING ──────────────────────────────────────────────────────
   var _arActiveFeeTab = '301';
+  var _as301AcctName = 'BRISTOL-MYERS SQUIBB COMPANY';
 
   function renderArSetup() {
     var container = document.getElementById('pg-ar');
@@ -3248,7 +3249,7 @@
     h += '<div class="as-fields-row">' +
          _asF('Carrier #',    '<input class="as-fi" style="width:145px" type="text" value="91AF">') +
          _asF('301 AR#',      '<span class="as-vc" style="width:145px">A91AF</span>') +
-         _asF('Account Name', '<input class="as-fi wide" style="width:440px" type="text" value="BRISTOL-MYERS SQUIBB COMPANY">') +
+         _asF('Account Name', '<input id="as-301-acct" class="as-fi wide" style="width:440px;text-transform:uppercase" type="text" value="' + _as301AcctName + '" oninput="_as301AcctInput(this)">') +
          '<div class="as-ar-inline" style="padding-bottom:4px;">' +
            '<input type="checkbox" id="as-arign">' +
            '<label for="as-arign" style="font-size:14px;cursor:pointer;">ARIGN</label>' +
@@ -3279,7 +3280,7 @@
     // 231 — AR# (enabled input) and Account Name
     h += '<div class="as-fields-row">' +
          _asF('231 AR#',      '<input class="as-fi" style="width:145px" type="text" value="10610">') +
-         _asF('Account Name', '<span class="as-vc" style="width:440px">BRISTOL-MYERS SQUIBB COMPANY - EGWP</span>') +
+         _asF('Account Name', '<span id="as-231-acct" class="as-vc" style="width:440px">' + (_as301AcctName ? _as301AcctName + ' - EGWP' : '') + '</span>') +
          '</div>';
 
     h += '<hr class="as-divider">';
@@ -3288,7 +3289,7 @@
     h += '<div class="as-fields-row">' +
          _asF('WRAP Carrier #', '<input class="as-fi" style="width:145px" type="text" value="92AC">') +
          _asF('WRAP AR#',       '<span class="as-vc" style="width:145px">A92AC</span>') +
-         _asF('Account Name',   '<span class="as-vc" style="width:440px">BRISTOL-MYERS SQUIBB COMPANY - ENHANCED</span>') +
+         _asF('Account Name',   '<span id="as-wrap-acct" class="as-vc" style="width:440px">' + (_as301AcctName ? _as301AcctName + ' - ENHANCED' : '') + '</span>') +
          '</div>';
 
     // WRAP — row 2: Billing Level, Detail Level
@@ -3437,6 +3438,18 @@
     _asFeeState[ar].filters[colIdx] = value.toLowerCase();
     _asFeeState[ar].page = 1;
     _asRefreshFeeTable(ar);
+  }
+
+  function _as301AcctInput(input) {
+    var v = input.value.toUpperCase();
+    var pos = input.selectionStart;
+    input.value = v;
+    input.setSelectionRange(pos, pos);
+    _as301AcctName = v;
+    var s231 = document.getElementById('as-231-acct');
+    var sWrap = document.getElementById('as-wrap-acct');
+    if (s231)  s231.textContent  = v ? v + ' - EGWP'     : '';
+    if (sWrap) sWrap.textContent = v ? v + ' - ENHANCED' : '';
   }
 
   function _asRefreshFeeTable(ar) {
