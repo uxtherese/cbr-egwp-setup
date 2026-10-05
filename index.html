@@ -382,13 +382,13 @@
 
     /* ── DATE INPUT (inline table cell) ────────────────── */
     .date-input {
-      border: 1px solid transparent; border-radius: 3px;
-      padding: 1px 4px; font-size: 13px; font-family: inherit;
-      color: var(--table-text); background: transparent;
-      width: 120px; height: 26px; cursor: pointer;
+      border: 1px solid #1a1a19; border-radius: 8px;
+      padding: 0 8px; font-size: 14px; font-family: inherit;
+      color: #1a1a19; background: #fff;
+      width: 120px; height: 32px; cursor: pointer; box-sizing: border-box;
     }
-    .date-input:hover { border-color: var(--border); background: #fff; }
-    .date-input:focus { border-color: var(--blue-link); background: #fff; outline: none; }
+    .date-input:focus { border: 2px solid #0aa69c; background: #fff; outline: none; }
+    .date-input:disabled { border: 1px dashed #767471; background: #f2efeb; color: #474644; cursor: not-allowed; }
 
     /* ── CHECKBOX ─────────────────────────────────────── */
     input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 16px; height: 16px; border: 2px solid #1a1a19; border-radius: 4px; background: #fff; cursor: pointer; position: relative; flex-shrink: 0; vertical-align: middle; display: inline-flex; align-items: center; justify-content: center; }
@@ -440,7 +440,7 @@
     .as-vc-date::after { content:""; display:inline-block; width:13px; height:13px; flex-shrink:0; margin-left:6px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%238a95a3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E") no-repeat center/contain; }
     .as-fi { font-size:14px; border:1px solid #1a1a19; border-radius:8px; padding:0 8px; color:var(--text-primary); background:#fff; height:32px; box-sizing:border-box; }
     .as-fi:disabled { background:#f2efeb; border:1px dashed #767471; color:var(--text-primary); cursor:not-allowed; }
-    .as-fi:focus { outline:none; border-color:var(--blue-active-tab); box-shadow:0 0 0 2px #cce6ff; }
+    .as-fi:focus { outline:none; border: 2px solid #0aa69c; }
     .as-fi[type="date"] { font-family:inherit; font-size:14px; font-weight:400; color:var(--text-primary); }
     .as-fi[type="date"]::-webkit-datetime-edit { font-family:inherit; font-size:14px; font-weight:400; color:var(--text-primary); }
     .as-fi[type="date"]::-webkit-datetime-edit-fields-wrapper { font-family:inherit; }
