@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CBR — EGWP AR Setup</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cvs-red: #cc0000;
+    --blue: #0051a2;
+    --blue-hover: #003d7a;
+    --blue-light: #e6f0fa;
+    --surface: #ffffff;
+    --surface-2: #f4f6f8;
+    --surface-3: #eef1f5;
+    --border: #c8cdd5;
+    --border-light: #e4e7ec;
+    --text: #1a1a1a;
+    --text-secondary: #555f6e;
+    --text-muted: #8a95a3;
+    --chip-bg: #f0f1f3;
+    --chip-border: #a8b0bb;
+    --pink: #d6006e;
+    --pink-bg: #fff0f7;
+    --ar301-bg: #e8f0fe;  --ar301-border: #4285f4;  --ar301-text: #1a56db;
+    --arwrap-bg: #fff3e0; --arwrap-border: #fb8c00; --arwrap-text: #c43a00;
+    --ar231-bg: #e8f5e9;  --ar231-border: #34a853;  --ar231-text: #1e7e34;
+    --radius: 3px;
+    --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  body {
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--text);
+    background: var(--surface-2);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── App bar */
+  .app-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    height: 44px;
+    display: flex; align-items: center;
+    padding: 0 16px;
+    justify-content: space-between;
+    flex-shrink: 0; gap: 12px;
+  }
+  .app-bar-left { display: flex; align-items: center; gap: 10px; }
+  .menu-btn {
+    background: none; border: none; padding: 2px; cursor: pointer;
+    color: var(--text-secondary); display: flex; align-items: center;
+  }
+  .cvs-logo {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 14px; font-weight: 700; color: var(--cvs-red);
+    text-decoration: none;
+  }
+  .app-product {
+    font-size: 13px; font-weight: 700; color: var(--text);
+    padding-left: 10px; margin-left: 2px;
+    border-left: 1px solid var(--border);
+  }
+  .app-bar-right { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
+  .sign-out { color: var(--blue); cursor: pointer; text-decoration: none; }
+  .sign-out:hover { text-decoration: underline; }
+
+  /* ── Carrier header */
+  .carrier-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px 0;
+    flex-shrink: 0;
+  }
+  .carrier-header-row { display: flex; align-items: center; gap: 10px; padding-bottom: 10px; }
+  .back-btn {
+    background: none; border: none; padding: 0; cursor: pointer;
+    color: var(--text-secondary); display: flex; align-items: center;
+  }
+  .carrier-title { font-size: 18px; font-weight: 700; color: var(--text); }
+  .pill-pink {
+    display: inline-flex; align-items: center;
+    padding: 3px 14px; border-radius: 20px;
+    font-size: 12px; font-weight: 600; letter-spacing: .1px;
+    background: var(--pink); color: #fff;
+  }
+
+  /* ── Nav tabs */
+  .nav-tabs { display: flex; }
+  .nav-tab {
+    padding: 8px 16px; font-size: 13px; color: var(--text-secondary);
+    cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -1px; white-space: nowrap; transition: color .12s;
+  }
+  .nav-tab:hover { color: var(--blue); }
+  .nav-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+  /* ── Main */
+  .main { flex: 1; padding: 20px 24px 100px; max-width: 980px; width: 100%; }
+
+  /* ── Top meta */
+  .top-meta { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .meta-label { font-size: 12px; color: var(--text-secondary); }
+  .faf-chip {
+    display: inline-flex; align-items: center;
+    padding: 2px 10px;
+    border: 1.5px dashed var(--chip-border);
+    border-radius: var(--radius);
+    background: var(--chip-bg);
+    font-size: 12px; font-weight: 500; color: var(--text);
+    min-width: 56px;
+  }
+  .load-faf-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 11px;
+    border: 1px solid var(--blue); border-radius: var(--radius);
+    font-size: 12px; font-weight: 500; color: var(--blue);
+    background: transparent; cursor: pointer; transition: background .12s;
+  }
+  .load-faf-btn:hover { background: var(--blue-light); }
+  .last-synced { font-size: 11px; color: var(--text-muted); }
+
+  /* ── Section headings */
+  .frd-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+  .section-title {
+    font-size: 13px; font-weight: 700; color: var(--text);
+    margin: 20px 0 12px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  /* ── AR sub-labels */
+  .ar-sub {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 600; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: .5px;
+    margin-bottom: 10px;
+  }
+  .ar-tag {
+    display: inline-flex; align-items: center;
+    padding: 1px 6px; border-radius: 3px;
+    font-size: 11px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .ar-tag-301  { background: var(--ar301-bg);  border: 1px solid var(--ar301-border);  color: var(--ar301-text); }
+  .ar-tag-wrap { background: var(--arwrap-bg); border: 1px solid var(--arwrap-border); color: var(--arwrap-text); }
+  .ar-tag-231  { background: var(--ar231-bg);  border: 1px solid var(--ar231-border);  color: var(--ar231-text); }
+
+  /* ── Field layout */
+  .fields-row { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+  .field { display: flex; flex-direction: column; gap: 3px; position: relative; }
+  .fl { font-size: 11px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
+  .fl-note { font-size: 10px; font-weight: 400; color: var(--text-muted); }
+  .req { color: #c00; margin-left: 1px; }
+
+  /* Value chip — FAF-populated or system-fixed */
+  .vc {
+    height: 26px; min-width: 70px;
+    display: inline-flex; align-items: center;
+    padding: 0 8px;
+    border: 1.5px dashed var(--chip-border);
+    border-radius: var(--radius);
+    background: var(--chip-bg);
+    font-size: 12px; font-weight: 500; color: var(--text);
+  }
+  .vc-muted { color: var(--text-muted); }
+
+  /* Regular input */
+  .fi {
+    height: 26px; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 0 7px; font-size: 12px; color: var(--text);
+    background: var(--surface); outline: none;
+  }
+  .fi:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(0,81,162,.1); }
+  .fi:disabled {
+    background: #f8f9fa; color: var(--text-muted);
+    border-style: dashed; cursor: not-allowed;
+  }
+  select.fi {
+    padding-right: 20px; appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 5px center;
+  }
+
+  /* Derived AR display */
+  .derived-ar {
+    height: 26px; min-width: 80px;
+    display: inline-flex; align-items: center;
+    padding: 0 8px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    background: var(--surface-3);
+    font-size: 12px; font-weight: 600; color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Widths */
+  .w60  { width: 60px;  }
+  .w70  { width: 70px;  }
+  .w80  { width: 80px;  }
+  .w90  { width: 90px;  }
+  .w110 { width: 110px; }
+  .w130 { width: 130px; }
+  .w150 { width: 150px; }
+  .w180 { width: 180px; }
+
+  /* ── Carrier row */
+  .carriers-row { display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .arign-wrap {
+    display: flex; align-items: center; gap: 4px;
+    padding-bottom: 3px; font-size: 12px; color: var(--text);
+  }
+  .arign-wrap input { width: 13px; height: 13px; accent-color: var(--blue); cursor: pointer; }
+
+  /* ── Checkbox rows */
+  .check-row { display: flex; align-items: center; gap: 16px; margin: 8px 0; }
+  .check-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text); cursor: pointer; }
+  .check-item input { width: 13px; height: 13px; accent-color: var(--blue); cursor: pointer; }
+
+  /* ── Divider */
+  .divider { height: 1px; background: var(--border-light); margin: 16px 0; }
+
+  /* ── Pricing Fees table */
+  .table-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; color: var(--text-secondary); }
+  .ps-select {
+    height: 24px; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 0 18px 0 6px; font-size: 12px; outline: none;
+    background: var(--surface); appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 4px center;
+  }
+  .table-wrap { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead tr:first-child { background: var(--surface-2); border-bottom: 1px solid var(--border); }
+  th { padding: 7px 10px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+  .th-inner { display: flex; align-items: center; justify-content: space-between; }
+  .th-menu { opacity: .35; font-size: 13px; cursor: pointer; margin-left: 4px; }
+  .th-menu:hover { opacity: .8; }
+  tr.filter-row td { padding: 3px 6px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .filter-wrap { position: relative; }
+  .filter-icon {
+    position: absolute; left: 5px; top: 50%; transform: translateY(-50%);
+    width: 11px; height: 11px; color: var(--text-muted); pointer-events: none;
+  }
+  .filter-in {
+    height: 22px; width: 100%; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 0 4px 0 20px; font-size: 11px; outline: none; background: var(--surface);
+  }
+  .filter-in:focus { border-color: var(--blue); }
+  .filter-sel {
+    height: 22px; width: 100%; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 0 16px 0 20px; font-size: 11px; outline: none;
+    background: var(--surface); appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 3px center;
+  }
+  .filter-sel:focus { border-color: var(--blue); }
+  tbody tr { border-bottom: 1px solid var(--border-light); transition: background .08s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface-2); }
+  tbody tr.row-wrap { background: rgba(255,243,224,.3); }
+  tbody tr.row-wrap:hover { background: rgba(255,243,224,.55); }
+  tbody tr.row-231 { background: rgba(232,245,233,.3); }
+  tbody tr.row-231:hover { background: rgba(232,245,233,.55); }
+  td { padding: 6px 10px; vertical-align: middle; }
+  td.mat { font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; font-weight: 600; letter-spacing: .2px; }
+
+  .pager-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 12px; border-top: 1px solid var(--border-light);
+    background: var(--surface); font-size: 12px; color: var(--text-secondary);
+  }
+  .pager-btns { display: flex; align-items: center; gap: 2px; }
+  .pb {
+    height: 24px; min-width: 24px; padding: 0 4px;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--surface); font-size: 12px; color: var(--text);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background .1s;
+  }
+  .pb:hover:not(:disabled) { background: var(--surface-2); }
+  .pb:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* ── Field hint */
+  .field-hint {
+    position: absolute; top: 100%; left: 0;
+    font-size: 11px; color: var(--text-muted);
+    margin-top: 3px; white-space: nowrap;
+  }
+
+  /* ── Info note */
+  .info-note {
+    display: flex; align-items: flex-start; gap: 5px;
+    font-size: 11px; color: var(--text-muted); margin-top: 8px;
+  }
+
+  /* ── Fee tabs */
+  .fee-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+    gap: 0;
+  }
+  .fee-tab {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 16px 9px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-secondary);
+    background: none; border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer; margin-bottom: -1px;
+    white-space: nowrap; transition: color .12s;
+  }
+  .fee-tab:hover:not(.active) { color: var(--text); background: var(--surface-2); }
+  #ftab-301.active  { color: var(--ar301-text);  border-bottom-color: var(--ar301-border);  background: var(--ar301-bg); }
+  #ftab-wrap.active { color: var(--arwrap-text); border-bottom-color: var(--arwrap-border); background: var(--arwrap-bg); }
+  #ftab-231.active  { color: var(--ar231-text);  border-bottom-color: var(--ar231-border);  background: var(--ar231-bg); }
+  .fee-count {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 18px; height: 18px; padding: 0 5px;
+    border-radius: 9px; font-size: 11px; font-weight: 600;
+    background: var(--surface-3); color: var(--text-secondary);
+    transition: background .12s, color .12s;
+  }
+  #ftab-301.active  .fee-count { background: rgba(66,133,244,.15); color: var(--ar301-text); }
+  #ftab-wrap.active .fee-count { background: rgba(251,140,0,.15);  color: var(--arwrap-text); }
+  #ftab-231.active  .fee-count { background: rgba(52,168,83,.15);  color: var(--ar231-text); }
+  .fee-panel { display: none; padding-top: 12px; }
+  .fee-panel.active { display: block; }
+
+  /* ── Bottom bar */
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--surface); border-top: 1px solid var(--border);
+    padding: 10px 20px;
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 8px; z-index: 100;
+    box-shadow: 0 -2px 8px rgba(0,0,0,.06);
+  }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+    height: 32px; padding: 0 14px; border-radius: var(--radius);
+    font-size: 12px; font-weight: 500; cursor: pointer;
+    border: 1px solid transparent; transition: background .12s; white-space: nowrap;
+  }
+  .btn-sec { background: var(--surface); border-color: var(--border); color: var(--text); }
+  .btn-sec:hover { background: var(--surface-2); }
+  .btn-pri { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .btn-pri:hover { background: var(--blue-hover); }
+</style>
+</head>
+<body>
+
+<!-- App bar -->
+<div class="app-bar">
+  <div class="app-bar-left">
+    <button class="menu-btn">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <a class="cvs-logo" href="#">
+      <svg width="18" height="17" viewBox="0 0 40 36" fill="none">
+        <path d="M20 34C20 34 2 22.5 2 11.5C2 6.25 6 2 11 2C14.2 2 17 3.8 19 6.5C21 3.8 23.8 2 27 2C32 2 38 6.25 38 11.5C38 22.5 20 34 20 34Z" fill="#cc0000"/>
+      </svg>
+      CVSHealth.
+    </a>
+    <span class="app-product">CBR</span>
+  </div>
+  <div class="app-bar-right">
+    Welcome, Sally Smith (Manager)&nbsp; <a class="sign-out">Sign out</a>
+  </div>
+</div>
+
+<!-- Carrier header + nav -->
+<div class="carrier-header">
+  <div class="carrier-header-row">
+    <button class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <span class="carrier-title">Carrier #91AF</span>
+    <span class="pill-pink">Setup in Progress</span>
+  </div>
+  <nav class="nav-tabs">
+    <div class="nav-tab">New Client Overview</div>
+    <div class="nav-tab active">AR Setup</div>
+    <div class="nav-tab" onclick="location.href=(sessionStorage.getItem('egwp_fees_source')||'v2-egwp-manage-fees.html')">Manage Fees</div>
+    <div class="nav-tab">FAF Details</div>
+    <div class="nav-tab">QC Packet</div>
+  </nav>
+</div>
+
+<!-- Main content -->
+<div class="main">
+
+  <!-- Billing Level + Load FAF -->
+  <div class="top-meta">
+    <span class="meta-label">Billing FAF</span>
+    <span class="faf-chip">49551</span>
+    <button class="load-faf-btn">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="1 4 1 10 7 10"/>
+        <path d="M3.51 15a9 9 0 1 0 .49-5.1"/>
+      </svg>
+      Load FAF
+    </button>
+    <span class="last-synced">Last synced 8/18/2026, 5:00:45 PM</span>
+  </div>
+
+  <div class="frd-title">FRD (1)</div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- Carrier(s) and AR(s) -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section-title">Carrier(s) and AR(s)</div>
+
+  <div class="carriers-row">
+    <div class="field">
+      <div class="fl">Carrier #<span class="req">*</span></div>
+      <select class="fi w110" id="carrierSelect" onchange="onCarrierChange(this.value)">
+        <option value="91AF" selected>91AF</option>
+        <option value="88BZ">88BZ</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="fl">301 AR</div>
+      <span class="derived-ar" id="ar301Display">A91AF</span>
+    </div>
+    <div class="field" style="margin-left:6px;">
+      <div class="fl">WRAP Carrier #</div>
+      <input class="fi w110" type="text" id="wrapCarrierField" value="92AC" />
+    </div>
+    <div class="field">
+      <div class="fl">WRAP AR</div>
+      <span class="derived-ar" id="wrapARDisplay">A92AC</span>
+    </div>
+    <div class="field" style="margin-left:6px;">
+      <div class="fl">231 AR # (SSI)</div>
+      <input class="fi w110" type="text" id="ar231Field" value="10610" />
+    </div>
+    <div class="arign-wrap">
+      <input type="checkbox" id="arign" /><label for="arign">ARIGN</label>
+    </div>
+  </div>
+
+  <!-- hidden inputs used by JS for table tags / prevAcct -->
+  <input type="hidden" id="ar301Field"  value="A91AF" />
+  <input type="hidden" id="wrapARField" value="A92AC" />
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- Billing Structure -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section-title">Billing Structure</div>
+
+  <!-- 301 Billing -->
+  <div class="ar-sub">
+    <span class="ar-tag ar-tag-301" id="bs-tag-301">A91AF</span>
+    301 AR
+  </div>
+
+  <div class="fields-row">
+    <div class="field">
+      <div class="fl">Billing Level</div>
+      <span class="vc w90" id="billing-level-301">GROUP</span>
+    </div>
+    <div class="field">
+      <div class="fl">Detail Level</div>
+      <span class="vc w90" id="detail-level-301">RPT-GRP</span>
+    </div>
+    <div class="field">
+      <div class="fl">Account Name</div>
+      <input class="fi w150" type="text" id="acct-name-301" oninput="syncAccountNames()" />
+    </div>
+  </div>
+
+  <div class="fields-row">
+    <div class="field">
+      <div class="fl">AEF List Name</div>
+      <span class="vc w110">FUND4XMTH</span>
+    </div>
+    <div class="field">
+      <div class="fl">Differential Type</div>
+      <span class="vc w90">SPLIT</span>
+    </div>
+    <div class="field">
+      <div class="fl">Invoice Type</div>
+      <span class="vc w90">EXCL_CR</span>
+    </div>
+    <div class="field">
+      <div class="fl">Admin Invoicing</div>
+      <select class="fi w110">
+        <option>Month End</option>
+        <option>Weekly</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="fl">PMPM Indicator</div>
+      <select class="fi w110">
+        <option value="">— select —</option>
+        <option selected>SHOW</option>
+        <option>HIDE</option>
+        <option>NONE</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="check-row">
+    <label class="check-item"><input type="checkbox" /> Invoice at month end</label>
+  </div>
+  <div class="fields-row" style="align-items:center;margin-top:6px;">
+    <label class="check-item" style="padding-bottom:0;"><input type="checkbox" checked /> Daily indicator</label>
+    <div class="field">
+      <div class="fl">Daily Eff Date</div>
+      <input class="fi w110" type="text" id="daily-eff-301" value="01/01/2027" disabled />
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- WRAP Billing -->
+  <div class="ar-sub">
+    <span class="ar-tag ar-tag-wrap" id="bs-tag-wrap">A92AC</span>
+    WRAP AR
+  </div>
+
+  <div class="fields-row">
+    <div class="field">
+      <div class="fl">Billing Level</div>
+      <span class="vc w90" id="billing-level-wrap">GROUP</span>
+    </div>
+    <div class="field">
+      <div class="fl">Detail Level</div>
+      <span class="vc w90" id="detail-level-wrap">RPT-GRP</span>
+    </div>
+    <div class="field">
+      <div class="fl">Account Name</div>
+      <input class="fi w180" type="text" id="acct-name-wrap" value="- ENHANCED" disabled />
+    </div>
+  </div>
+
+  <div class="fields-row">
+    <div class="field">
+      <div class="fl">AEF List Name</div>
+      <span class="vc w110" id="wrap-aef">FUND4XMTH</span>
+    </div>
+    <div class="field">
+      <div class="fl">Differential Type</div>
+      <span class="vc w90">— (FAF)</span>
+    </div>
+    <div class="field">
+      <div class="fl">Invoice Type</div>
+      <span class="vc w90" id="wrap-inv-type">EXCL_CR</span>
+    </div>
+    <div class="field">
+      <div class="fl">Admin Invoicing</div>
+      <select class="fi w110">
+        <option>Month End</option>
+        <option>Weekly</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="fl">PMPM Indicator</div>
+      <span class="vc w90 vc-muted">NONE</span>
+    </div>
+  </div>
+
+  <div class="check-row">
+    <label class="check-item"><input type="checkbox" /> Invoice at month end</label>
+  </div>
+  <div class="fields-row" style="align-items:center;margin-top:6px;">
+    <label class="check-item" style="padding-bottom:0;"><input type="checkbox" checked /> Daily indicator</label>
+    <div class="field">
+      <div class="fl">Daily Eff Date</div>
+      <input class="fi w110" type="text" id="daily-eff-wrap" value="01/01/2027" disabled />
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 231 Billing -->
+  <div class="ar-sub">
+    <span class="ar-tag ar-tag-231" id="bs-tag-231">10610</span>
+    231 AR — SSI
+  </div>
+
+  <div class="fields-row">
+    <div class="field">
+      <div class="fl">Account Name</div>
+      <input class="fi w180" type="text" id="acct-name-231" value="- EGWP" disabled />
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- Payment Structure -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section-title">Payment Structure</div>
+
+  <!-- 301 Payment -->
+  <div class="ar-sub">
+    <span class="ar-tag ar-tag-301" id="ps-tag-301">A91AF</span>
+    301 AR
+  </div>
+
+  <div class="fields-row">
+    <div class="field">
+      <div class="fl">Claim payment by</div>
+      <select class="fi w130">
+        <option>ACH Credit</option>
+        <option>ACH Debit</option>
+        <option>Check</option>
+        <option>Wire</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="fl">Admin payment by</div>
+      <select class="fi w130">
+        <option>ACH Debit</option>
+        <option>ACH Credit</option>
+        <option>Check</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="fl">Invoicing Dates</div>
+      <span class="vc w70">99</span>
+    </div>
+    <div class="field">
+      <div class="fl">Invoicing List Dates</div>
+      <span class="vc w90">99</span>
+    </div>
+  </div>
+
+  <div class="fields-row">
+    <div class="field">
+      <div class="fl">Incoming Claim Pmts</div>
+      <input class="fi w90" type="text" value="2" />
+    </div>
+    <div class="field">
+      <div class="fl">Incoming Fee Pmts</div>
+      <input class="fi w90" type="text" value="7" />
+    </div>
+    <div class="field">
+      <div class="fl">Terms of Pmt</div>
+      <input class="fi w80" type="text" value="XAH2" disabled />
+    </div>
+    <div class="field">
+      <div class="fl">B/E Charges</div>
+      <input class="fi w90" type="text" value="XAH2" disabled />
+    </div>
+  </div>
+
+  <div class="check-row" style="margin-bottom:4px;">
+    <label class="check-item"><input type="checkbox" checked /> Billing Request</label>
+    <label class="check-item"><input type="checkbox" checked /> Flag258</label>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- WRAP Payment -->
+  <div class="ar-sub">
+    <span class="ar-tag ar-tag-wrap" id="ps-tag-wrap">A92AC</span>
+    WRAP AR
+  </div>
+
+  <div class="fields-row">
+    <div class="field">
+      <div class="fl">Claim payment by</div>
+      <select class="fi w130">
+        <option>ACH Credit</option>
+        <option>ACH Debit</option>
+        <option>Check</option>
+        <option>Wire</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="fl">Admin payment by</div>
+      <select class="fi w130">
+        <option>ACH Debit</option>
+        <option>ACH Credit</option>
+        <option>Check</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="fl">Invoicing Dates</div>
+      <input class="fi w70" type="text" id="inv-dates-wrap" />
+    </div>
+    <div class="field">
+      <div class="fl">Invoicing List Dates</div>
+      <input class="fi w90" type="text" id="inv-list-wrap" />
+    </div>
+  </div>
+
+  <div class="fields-row">
+    <div class="field">
+      <div class="fl">Incoming Claim Pmts</div>
+      <input class="fi w90" type="text" value="2" />
+    </div>
+    <div class="field">
+      <div class="fl">Incoming Fee Pmts</div>
+      <input class="fi w90" type="text" value="7" />
+    </div>
+    <div class="field">
+      <div class="fl">Terms of Pmt</div>
+      <select class="fi w110" id="terms-wrap">
+        <option value="">— select —</option>
+        <option>XA10</option>
+        <option>XAH2</option>
+        <option>XE05</option>
+        <option>XE10</option>
+        <option>XE15</option>
+        <option>XE30</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="fl">B/E Charges</div>
+      <select class="fi w90" id="be-wrap">
+        <option value="">— select —</option>
+        <option>XA10</option>
+        <option>XE05</option>
+        <option>XE10</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="check-row" style="margin-bottom:4px;">
+    <label class="check-item"><input type="checkbox" /> Split Admin Fee</label>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 231 Payment -->
+  <div class="ar-sub">
+    <span class="ar-tag ar-tag-231" id="ps-tag-231">10610</span>
+    231 AR — SSI
+  </div>
+
+  <div class="fields-row">
+    <div class="field">
+      <div class="fl">Terms of Pmt</div>
+      <select class="fi w110" id="terms-231">
+        <option value="">— select —</option>
+        <option>SA15</option>
+        <option>SA30</option>
+        <option>SA45</option>
+        <option>SA60</option>
+        <option>SA90</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="fl">Previous Account # <span class="fl-note">(link to 301)</span></div>
+      <input class="fi w110" type="text" id="prevAcctField" value="A91AF" disabled />
+    </div>
+  </div>
+
+  <div class="fields-row">
+    <div class="field">
+      <div class="fl">Invoicing Dates</div>
+      <input class="fi w70" type="text" id="inv-dates-231" />
+    </div>
+    <div class="field">
+      <div class="fl">Invoicing List Dates</div>
+      <input class="fi w90" type="text" id="inv-list-231" />
+    </div>
+    <div class="field">
+      <div class="fl">B/E Charges</div>
+      <select class="fi w90" id="be-231">
+        <option value="">— select —</option>
+        <option>SA10</option>
+        <option>SA15</option>
+        <option>XE05</option>
+        <option>XE10</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- Pricing Fees -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section-title">Pricing Fees</div>
+
+  <!-- AR fee tabs -->
+  <div class="fee-tabs">
+    <button class="fee-tab active" id="ftab-301" onclick="switchFeeTab('301')">
+      <span class="ar-tag ar-tag-301" id="ftag-301">A91AF</span>
+      301 AR
+      <span class="fee-count" id="fcount-301">10</span>
+    </button>
+    <button class="fee-tab" id="ftab-wrap" onclick="switchFeeTab('wrap')">
+      <span class="ar-tag ar-tag-wrap" id="ftag-wrap">A92AC</span>
+      WRAP AR
+      <span class="fee-count" id="fcount-wrap">8</span>
+    </button>
+    <button class="fee-tab" id="ftab-231" onclick="switchFeeTab('231')">
+      <span class="ar-tag ar-tag-231" id="ftag-231">10610</span>
+      231 AR
+      <span class="fee-count" id="fcount-231">11</span>
+    </button>
+  </div>
+
+  <!-- 301 AR fee panel -->
+  <div class="fee-panel active" id="fpanel-301">
+    <div class="table-meta">
+      Page size:
+      <select class="ps-select" onchange="setTabPS('301',+this.value)">
+        <option value="10" selected>10</option><option value="25">25</option><option value="50">50</option>
+      </select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:140px;"><div class="th-inner">Material Code <span class="th-menu">⋮</span></div></th>
+            <th style="width:80px;"><div class="th-inner">FAF <span class="th-menu">⋮</span></div></th>
+            <th><div class="th-inner">Description <span class="th-menu">⋮</span></div></th>
+            <th style="width:90px;"><div class="th-inner">Fee <span class="th-menu">⋮</span></div></th>
+            <th style="width:105px;"><div class="th-inner">Valid From <span class="th-menu">⋮</span></div></th>
+            <th style="width:105px;"><div class="th-inner">Valid To <span class="th-menu">⋮</span></div></th>
+          </tr>
+          <tr class="filter-row">
+            <td><div class="filter-wrap"><svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg><input class="filter-in" type="text" placeholder="filter…" oninput="setTabDesc('301',this.value)" /></div></td>
+            <td></td>
+            <td><div class="filter-wrap"><svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg><input class="filter-in" type="text" placeholder="filter…" oninput="setTabDesc('301',this.value)" /></div></td>
+            <td></td><td></td><td></td>
+          </tr>
+        </thead>
+        <tbody id="feeBody-301"></tbody>
+      </table>
+      <div class="pager-row">
+        <span id="pageInfo-301"></span>
+        <div class="pager-btns">
+          <button class="pb" id="btnFirst-301" onclick="goTabPage('301',1)"    disabled title="First">|&lt;</button>
+          <button class="pb" id="btnPrev-301"  onclick="moveTabPage('301',-1)" disabled title="Previous">&lt;</button>
+          <button class="pb" id="btnNext-301"  onclick="moveTabPage('301',1)"  disabled title="Next">&gt;</button>
+          <button class="pb" id="btnLast-301"  onclick="goTabLast('301')"      disabled title="Last">&gt;|</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WRAP AR fee panel -->
+  <div class="fee-panel" id="fpanel-wrap">
+    <div class="table-meta">
+      Page size:
+      <select class="ps-select" onchange="setTabPS('wrap',+this.value)">
+        <option value="10" selected>10</option><option value="25">25</option><option value="50">50</option>
+      </select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:140px;"><div class="th-inner">Material Code <span class="th-menu">⋮</span></div></th>
+            <th style="width:80px;"><div class="th-inner">FAF <span class="th-menu">⋮</span></div></th>
+            <th><div class="th-inner">Description <span class="th-menu">⋮</span></div></th>
+            <th style="width:90px;"><div class="th-inner">Fee <span class="th-menu">⋮</span></div></th>
+            <th style="width:105px;"><div class="th-inner">Valid From <span class="th-menu">⋮</span></div></th>
+            <th style="width:105px;"><div class="th-inner">Valid To <span class="th-menu">⋮</span></div></th>
+          </tr>
+          <tr class="filter-row">
+            <td><div class="filter-wrap"><svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg><input class="filter-in" type="text" placeholder="filter…" oninput="setTabDesc('wrap',this.value)" /></div></td>
+            <td></td>
+            <td><div class="filter-wrap"><svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg><input class="filter-in" type="text" placeholder="filter…" oninput="setTabDesc('wrap',this.value)" /></div></td>
+            <td></td><td></td><td></td>
+          </tr>
+        </thead>
+        <tbody id="feeBody-wrap"></tbody>
+      </table>
+      <div class="pager-row">
+        <span id="pageInfo-wrap"></span>
+        <div class="pager-btns">
+          <button class="pb" id="btnFirst-wrap" onclick="goTabPage('wrap',1)"    disabled title="First">|&lt;</button>
+          <button class="pb" id="btnPrev-wrap"  onclick="moveTabPage('wrap',-1)" disabled title="Previous">&lt;</button>
+          <button class="pb" id="btnNext-wrap"  onclick="moveTabPage('wrap',1)"  disabled title="Next">&gt;</button>
+          <button class="pb" id="btnLast-wrap"  onclick="goTabLast('wrap')"      disabled title="Last">&gt;|</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 231 AR fee panel -->
+  <div class="fee-panel" id="fpanel-231">
+    <div class="table-meta">
+      Page size:
+      <select class="ps-select" onchange="setTabPS('231',+this.value)">
+        <option value="10" selected>10</option><option value="25">25</option><option value="50">50</option>
+      </select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:140px;"><div class="th-inner">Material Code <span class="th-menu">⋮</span></div></th>
+            <th style="width:80px;"><div class="th-inner">FAF <span class="th-menu">⋮</span></div></th>
+            <th><div class="th-inner">Description <span class="th-menu">⋮</span></div></th>
+            <th style="width:90px;"><div class="th-inner">Fee <span class="th-menu">⋮</span></div></th>
+            <th style="width:105px;"><div class="th-inner">Valid From <span class="th-menu">⋮</span></div></th>
+            <th style="width:105px;"><div class="th-inner">Valid To <span class="th-menu">⋮</span></div></th>
+          </tr>
+          <tr class="filter-row">
+            <td><div class="filter-wrap"><svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg><input class="filter-in" type="text" placeholder="filter…" oninput="setTabDesc('231',this.value)" /></div></td>
+            <td></td>
+            <td><div class="filter-wrap"><svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg><input class="filter-in" type="text" placeholder="filter…" oninput="setTabDesc('231',this.value)" /></div></td>
+            <td></td><td></td><td></td>
+          </tr>
+        </thead>
+        <tbody id="feeBody-231"></tbody>
+      </table>
+      <div class="pager-row">
+        <span id="pageInfo-231"></span>
+        <div class="pager-btns">
+          <button class="pb" id="btnFirst-231" onclick="goTabPage('231',1)"    disabled title="First">|&lt;</button>
+          <button class="pb" id="btnPrev-231"  onclick="moveTabPage('231',-1)" disabled title="Previous">&lt;</button>
+          <button class="pb" id="btnNext-231"  onclick="moveTabPage('231',1)"  disabled title="Next">&gt;</button>
+          <button class="pb" id="btnLast-231"  onclick="goTabLast('231')"      disabled title="Last">&gt;|</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div><!-- /main -->
+
+<!-- Bottom bar -->
+<div class="bottom-bar">
+  <button class="btn btn-sec">Discard Changes</button>
+  <button class="btn btn-sec">Save Draft</button>
+  <button class="btn btn-pri">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+    </svg>
+    Send to SAP
+  </button>
+</div>
+
+<script>
+  const carriers = {
+    '91AF': { ar301: 'A91AF', ar231: '10610', wrap: '92AC', wrapAR: 'A92AC',
+              clientName: 'BRISTOL-MYERS SQUIBB COMPANY',
+              billingLevel: 'CARRIER', detailLevel: 'RPT-GRP', dailyEffDate: '01/01/2025',
+              wrapFAF: '49608', wrapAEF: 'FUND4XMTH', wrapInvType: 'EXCL_CR',
+              wrapTerms: 'XA10', wrapBE: 'XA10', wrapInvDates: '99', wrapInvList: '99',
+              terms231: 'SA15', be231: 'SA15', invDates231: '99', invList231: '99' },
+    '88BZ': { ar301: 'A88BZ', ar231: '10611', wrap: '89AC', wrapAR: 'A89AC',
+              clientName: 'ANOTHER PLAN INC',
+              billingLevel: 'CARRIER', detailLevel: 'RPT-GRP', dailyEffDate: '01/01/2027',
+              wrapFAF: '49609', wrapAEF: 'FUND4XMTH', wrapInvType: 'EXCL_CR',
+              wrapTerms: 'XA10', wrapBE: 'XA10', wrapInvDates: '99', wrapInvList: '99',
+              terms231: 'SA15', be231: 'SA15', invDates231: '99', invList231: '99' },
+  };
+
+  function syncAccountNames() {
+    const base = document.getElementById('acct-name-301').value.trim();
+    document.getElementById('acct-name-wrap').value = base ? base + ' - ENHANCED' : '- ENHANCED';
+    document.getElementById('acct-name-231').value  = base ? base + ' - EGWP'     : '- EGWP';
+  }
+
+  function onCarrierChange(val) {
+    const c = carriers[val];
+    if (!c) return;
+    // hidden fields for JS reference
+    document.getElementById('ar301Field').value  = c.ar301;
+    document.getElementById('wrapARField').value = c.wrapAR;
+    // visible derived-ar displays
+    document.getElementById('ar301Display').textContent  = c.ar301;
+    document.getElementById('wrapARDisplay').textContent = c.wrapAR;
+    // other inputs
+    document.getElementById('ar231Field').value       = c.ar231;
+    document.getElementById('wrapCarrierField').value  = c.wrap;
+    document.getElementById('prevAcctField').value    = c.ar301;
+    // Billing Level / Detail Level chips
+    document.getElementById('billing-level-301').textContent  = c.billingLevel;
+    document.getElementById('detail-level-301').textContent   = c.detailLevel;
+    document.getElementById('billing-level-wrap').textContent = c.billingLevel;
+    document.getElementById('detail-level-wrap').textContent  = c.detailLevel;
+    // Daily Eff Date
+    document.getElementById('daily-eff-301').value  = c.dailyEffDate;
+    document.getElementById('daily-eff-wrap').value = c.dailyEffDate;
+    // Account Names
+    document.getElementById('acct-name-301').value   = c.clientName;
+    syncAccountNames();
+    // WRAP billing chips
+    document.getElementById('wrap-aef').textContent      = c.wrapAEF;
+    document.getElementById('wrap-inv-type').textContent = c.wrapInvType;
+    // WRAP payment fields
+    document.getElementById('inv-dates-wrap').value = c.wrapInvDates;
+    document.getElementById('inv-list-wrap').value  = c.wrapInvList;
+    document.getElementById('terms-wrap').value     = c.wrapTerms;
+    document.getElementById('be-wrap').value        = c.wrapBE;
+    // 231 payment fields
+    document.getElementById('terms-231').value      = c.terms231;
+    document.getElementById('be-231').value         = c.be231;
+    document.getElementById('inv-dates-231').value  = c.invDates231;
+    document.getElementById('inv-list-231').value   = c.invList231;
+    // AR sub-label tags — billing and payment sections
+    ['bs-tag-301','ps-tag-301'].forEach(id => {
+      document.getElementById(id).textContent = c.ar301;
+    });
+    ['bs-tag-wrap','ps-tag-wrap'].forEach(id => {
+      document.getElementById(id).textContent = c.wrapAR;
+    });
+    ['bs-tag-231','ps-tag-231'].forEach(id => {
+      document.getElementById(id).textContent = c.ar231;
+    });
+    // Fee tab AR chips
+    document.getElementById('ftag-301').textContent  = c.ar301;
+    document.getElementById('ftag-wrap').textContent = c.wrapAR;
+    document.getElementById('ftag-231').textContent  = c.ar231;
+    renderTab(activeTab);
+  }
+
+  // ── Fee data ────────────────────────────────────────
+  // 301: full set including PMPM (PM) and PP
+  // WRAP: same codes as 301 minus PM and PP, separate FAF (49552 placeholder — TBC)
+  // 231: SSI-specific 4-char codes, same FAF as 301 (49551) per Ann's confirmation
+  const allFees = [
+    // 301 AR rows — populated from Manage Fees
+    // WRAP AR rows — populated from Manage Fees
+    // 231 AR rows — pass-through fees, always $0.00
+    { mat:'CVDG', ar:'231', faf:'49551', desc:'Coverage Gap Discounts',      fee:'$0.00', from:'01/03/2026', to:'12/31/9999' },
+    { mat:'DISB', ar:'231', faf:'49551', desc:'Direct Subsidy',              fee:'$0.00', from:'01/03/2026', to:'12/31/9999' },
+    { mat:'LIPS', ar:'231', faf:'49551', desc:'LIPS Subsidy',                fee:'$0.00', from:'01/03/2026', to:'12/31/9999' },
+    { mat:'MCCL', ar:'231', faf:'49551', desc:'Mchoice Reimbursement',       fee:'$0.00', from:'01/03/2026', to:'12/31/9999' },
+    { mat:'MLCL', ar:'231', faf:'49551', desc:'Mail Reimbursement',          fee:'$0.00', from:'01/03/2026', to:'12/31/9999' },
+    { mat:'NGEG', ar:'231', faf:'49551', desc:'Network Guarantee',           fee:'$0.00', from:'01/03/2026', to:'12/31/9999' },
+    { mat:'PACL', ar:'231', faf:'49551', desc:'Paper Reimbursement',         fee:'$0.00', from:'01/03/2026', to:'12/31/9999' },
+    { mat:'RTCL', ar:'231', faf:'49551', desc:'Retail Reimbursement',        fee:'$0.00', from:'01/03/2026', to:'12/31/9999' },
+    { mat:'SPCL', ar:'231', faf:'49551', desc:'Specialty Reimbursement',     fee:'$0.00', from:'01/03/2026', to:'12/31/9999' },
+    { mat:'SWEG', ar:'231', faf:'49551', desc:'Claim Adjustment',            fee:'$0.00', from:'01/03/2026', to:'12/31/9999' },
+    { mat:'WOEG', ar:'231', faf:'49551', desc:'Performance Guarantee',       fee:'$0.00', from:'01/03/2026', to:'12/31/9999' },
+  ];
+
+  // Load any fees pushed from the Manage Fees prototype
+  try {
+    const stored = sessionStorage.getItem('egwp_pricing_fees');
+    if (stored) JSON.parse(stored).forEach(f => allFees.push(f));
+  } catch(e) {}
+
+  // Per-tab pagination/filter state
+  const tabState = {
+    '301':  { page: 1, ps: 10, descF: '' },
+    'wrap': { page: 1, ps: 10, descF: '' },
+    '231':  { page: 1, ps: 10, descF: '' },
+  };
+  let activeTab = '301';
+
+  function renderTab(ar) {
+    const st = tabState[ar];
+    const rows = allFees.filter(r => {
+      if (r.ar !== ar) return false;
+      if (!st.descF) return true;
+      return r.mat.toLowerCase().includes(st.descF) || r.desc.toLowerCase().includes(st.descF);
+    });
+    const total = rows.length;
+    const totalPages = Math.max(1, Math.ceil(total / st.ps));
+    st.page = Math.min(st.page, totalPages);
+    const start = (st.page - 1) * st.ps;
+    const slice = rows.slice(start, start + st.ps);
+    const end = Math.min(start + st.ps, total);
+
+    document.getElementById(`feeBody-${ar}`).innerHTML = slice.map(r => `
+      <tr>
+        <td class="mat">${r.mat}</td>
+        <td style="color:var(--text-secondary);font-variant-numeric:tabular-nums;">${r.faf}</td>
+        <td>${r.desc}</td>
+        <td>${r.fee}</td>
+        <td>${r.from}</td>
+        <td>${r.to}</td>
+      </tr>`).join('');
+
+    document.getElementById(`pageInfo-${ar}`).textContent =
+      total ? `${start + 1} to ${end} of ${total}` : 'No results';
+    document.getElementById(`btnFirst-${ar}`).disabled = st.page === 1;
+    document.getElementById(`btnPrev-${ar}`).disabled  = st.page === 1;
+    document.getElementById(`btnNext-${ar}`).disabled  = st.page >= totalPages;
+    document.getElementById(`btnLast-${ar}`).disabled  = st.page >= totalPages;
+
+    // Update tab row-count badge (reflects current filter)
+    document.getElementById(`fcount-${ar}`).textContent = total;
+  }
+
+  function switchFeeTab(ar) {
+    // Hide all panels, deactivate all tabs
+    ['301','wrap','231'].forEach(k => {
+      document.getElementById(`fpanel-${k}`).classList.remove('active');
+      document.getElementById(`ftab-${k}`).classList.remove('active');
+    });
+    document.getElementById(`fpanel-${ar}`).classList.add('active');
+    document.getElementById(`ftab-${ar}`).classList.add('active');
+    activeTab = ar;
+    renderTab(ar);
+  }
+
+  function setTabDesc(ar, v) { tabState[ar].descF = v.toLowerCase(); tabState[ar].page = 1; renderTab(ar); }
+  function setTabPS(ar, n)   { tabState[ar].ps = n; tabState[ar].page = 1; renderTab(ar); }
+  function moveTabPage(ar, d) {
+    const st = tabState[ar];
+    const total = allFees.filter(r => r.ar === ar).length;
+    st.page = Math.max(1, Math.min(Math.ceil(total / st.ps), st.page + d));
+    renderTab(ar);
+  }
+  function goTabPage(ar, p)  { tabState[ar].page = p; renderTab(ar); }
+  function goTabLast(ar) {
+    const total = allFees.filter(r => r.ar === ar).length;
+    tabState[ar].page = Math.max(1, Math.ceil(total / tabState[ar].ps));
+    renderTab(ar);
+  }
+
+  // Initial render of all three tabs so counts are accurate
+  renderTab('301'); renderTab('wrap'); renderTab('231');
+  // Pre-populate fields for the default carrier selection
+  onCarrierChange(document.getElementById('carrierSelect').value);
+</script>
+</body>
+</html>

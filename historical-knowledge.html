@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBR · Maintenance of Business</title>
+<style>
+/* ── Tokens ── */
+:root {
+  --blue:        #0047BB;
+  --blue-dark:   #003087;
+  --blue-subtle: #EEF3FF;
+  --blue-border: #BFDBFE;
+  --cvs-red:     #CC0000;
+  --text-dark:   #1A1A1A;
+  --text-mid:    #555555;
+  --text-light:  #888888;
+  --border:      #DCDCDC;
+  --border-mid:  #C8C8C8;
+  --page-bg:     #F5F6F7;
+  --white:       #FFFFFF;
+  --nav-w:       220px;
+  --topbar-h:    44px;
+  --drawer-w:    440px;
+  --r-sm:        4px;
+  --r-md:        8px;
+  --r-pill:      999px;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px; color: var(--text-dark); background: var(--page-bg);
+  height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+}
+
+/* ── Top Bar ── */
+#topbar {
+  height: var(--topbar-h); min-height: var(--topbar-h);
+  background: var(--white); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 16px; gap: 10px; z-index: 100;
+}
+.hamburger {
+  background: none; border: none; cursor: pointer; padding: 4px;
+  display: flex; flex-direction: column; gap: 4px; flex-shrink: 0;
+}
+.hamburger span { display: block; width: 18px; height: 2px; background: var(--text-mid); border-radius: 1px; }
+
+.cvs-logo { height: 26px; display: block; flex-shrink: 0; }
+
+.topbar-sep { color: var(--border-mid); font-size: 16px; line-height: 1; }
+.topbar-app { font-size: 13px; color: var(--text-mid); white-space: nowrap; }
+.topbar-spacer { flex: 1; }
+.topbar-user   { font-size: 12px; color: var(--text-mid); white-space: nowrap; }
+.topbar-signout {
+  font-size: 12px; color: var(--blue); background: none; border: none;
+  cursor: pointer; text-decoration: underline; white-space: nowrap;
+}
+
+/* ── App Body ── */
+#app-body { flex: 1; display: flex; overflow: hidden; height: calc(100vh - var(--topbar-h)); }
+
+/* ── Left Nav ── */
+#left-nav {
+  width: var(--nav-w); min-width: var(--nav-w);
+  background: #F2EFEB; border-right: 1px solid #DBD8D5;
+  display: flex; flex-direction: column;
+  transition: width 0.2s ease, min-width 0.2s ease;
+  overflow: hidden; z-index: 50;
+}
+#left-nav.collapsed { width: 0; min-width: 0; }
+
+/* Hide Menu control */
+.nav-hide {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 16px; height: 44px; width: 100%;
+  background: none; border: none; border-bottom: 1px solid #DBD8D5;
+  font-size: 13px; color: var(--text-mid); cursor: pointer;
+  text-align: left; white-space: nowrap; flex-shrink: 0;
+  transition: color 0.1s;
+}
+.nav-hide:hover { color: var(--text-dark); }
+.nav-hide:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+.nav-hide svg { flex-shrink: 0; }
+
+/* Nav items — top-level */
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 16px; height: 44px; width: 100%;
+  background: none; border: none; border-left: 3px solid transparent;
+  font-size: 14px; color: #333333; cursor: pointer;
+  text-align: left; white-space: nowrap; user-select: none;
+  transition: background 0.1s;
+}
+.nav-item:hover { background: #DBD8D5; }
+.nav-item:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+.nav-item svg { flex-shrink: 0; color: #666; }
+
+/* Parent nav item (expandable) */
+.nav-parent {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 16px; height: 44px; width: 100%;
+  background: none; border: none; border-left: 3px solid transparent;
+  font-size: 14px; color: #333333; font-weight: 500; cursor: pointer;
+  text-align: left; white-space: nowrap; user-select: none;
+  transition: background 0.1s;
+}
+.nav-parent:hover { background: #DBD8D5; }
+.nav-parent:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+.nav-parent svg { flex-shrink: 0; color: #666; }
+.nav-label  { flex: 1; min-width: 0; }
+.nav-chevron { flex-shrink: 0; transition: transform 0.2s; }
+.nav-parent[aria-expanded="true"] .nav-chevron { transform: rotate(180deg); }
+
+/* Children container */
+.nav-children {
+  overflow: hidden; max-height: 0;
+  transition: max-height 0.2s ease;
+}
+.nav-children.open { max-height: 160px; }
+
+/* Child nav items */
+.nav-child {
+  display: flex; align-items: center;
+  padding: 0 16px 0 46px; height: 40px; width: 100%;
+  background: none; border: none; border-left: 3px solid transparent;
+  font-size: 13px; color: var(--text-mid); cursor: pointer;
+  text-align: left; white-space: nowrap; user-select: none;
+  transition: background 0.1s;
+}
+.nav-child:hover { background: #DBD8D5; }
+.nav-child:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+.nav-child[aria-current="page"] {
+  background: var(--blue-subtle); border-left-color: var(--blue);
+  color: var(--blue); font-weight: 600;
+}
+
+/* ── Main Content ── */
+#main-content { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ── Page Header ── */
+#page-header {
+  padding: 14px 20px 12px; background: var(--white); border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; justify-content: space-between;
+}
+#page-header h1    { font-size: 18px; font-weight: 700; color: var(--text-dark); }
+#page-header .last-updated { font-size: 12px; color: var(--text-light); }
+
+/* ── Buttons ── */
+.pds-btn-primary {
+  background: var(--blue-dark); color: var(--white); border: none;
+  border-radius: var(--r-pill); padding: 7px 18px; font-size: 13px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: background 0.15s;
+}
+.pds-btn-primary:hover { background: #002070; }
+.pds-btn-secondary {
+  background: var(--white); color: var(--text-dark);
+  border: 1.5px solid var(--border-mid); border-radius: var(--r-pill);
+  padding: 6px 18px; font-size: 13px; font-weight: 500;
+  cursor: pointer; white-space: nowrap; transition: border-color 0.15s;
+}
+.pds-btn-secondary:hover { border-color: #888; }
+
+/* ── Status Cards ── */
+#status-cards {
+  display: flex; gap: 14px; padding: 16px 20px;
+  background: var(--page-bg); border-bottom: 1px solid var(--border);
+  overflow-x: auto; flex-shrink: 0;
+}
+.status-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 16px; padding: 16px;
+  width: 187px; min-width: 187px; height: 113px;
+  cursor: pointer; user-select: none;
+  display: flex; flex-direction: column; justify-content: space-between;
+  box-shadow: 0 1.5px 8px 0 rgba(26,26,25,0.25);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.status-card:hover { box-shadow: 0 3px 12px 0 rgba(26,26,25,0.32); }
+
+.card-title-row { display: flex; align-items: center; gap: 8px; }
+.card-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.dot-triage    { background: #A56DBD; }
+.dot-scheduled { background: #FF6699; }
+.dot-workable  { background: #4DB21B; }
+.dot-pending   { background: #00C7E8; }
+.dot-rfc       { background: #FF7300; }
+.card-title { font-size: 22px; font-weight: 600; color: var(--text-dark); line-height: 1.2; }
+.card-clock { width: 22px; height: 22px; flex-shrink: 0; color: var(--text-dark); }
+
+.card-view {
+  font-size: 14px; font-weight: 700; color: var(--blue);
+  text-decoration: none; cursor: pointer; display: inline-block;
+}
+
+/* Selected state — 1px border matching each status color */
+.card-all.active       { border-color: var(--text-dark); }
+.card-triage.active    { border-color: #A56DBD; }
+.card-scheduled.active { border-color: #FF6699; }
+.card-workable.active  { border-color: #4DB21B; }
+.card-pending.active   { border-color: #00C7E8; }
+.card-rfc.active       { border-color: #FF7300; }
+
+/* ── Workbench Body ── */
+#workbench-body { flex: 1; display: flex; overflow: hidden; min-height: 0; }
+#workbench-left { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ── Content Area ── */
+#content-area { flex: 1; display: flex; overflow: hidden; min-height: 0; }
+
+/* ── Table Section ── */
+#table-section { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ── History icon button (in FAF cell) ── */
+.faf-cell { display: inline-flex; align-items: center; gap: 5px; }
+.history-btn {
+  background: none; border: none; cursor: pointer; padding: 1px;
+  color: var(--text-light); display: inline-flex; align-items: center;
+  border-radius: var(--r-sm); flex-shrink: 0;
+  transition: color 0.12s;
+}
+.history-btn:hover { color: var(--blue); }
+tbody tr.selected .history-btn { color: var(--blue); }
+
+/* FAF ID link */
+.faf-link {
+  color: var(--blue); cursor: pointer;
+  text-decoration: none; border-bottom: 1px solid transparent;
+  transition: border-color 0.1s;
+}
+.faf-link:hover { border-bottom-color: var(--blue); }
+
+/* ── Table ── */
+#table-wrap { flex: 1; overflow: auto; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+thead { position: sticky; top: 0; z-index: 10; }
+
+thead tr.col-headers th {
+  background: #F0F2F5; border-bottom: 2px solid var(--border-mid);
+  border-right: 1px solid var(--border); padding: 0 10px;
+  height: 36px; text-align: left; font-size: 12px; font-weight: 600;
+  color: var(--text-mid); white-space: nowrap; overflow: hidden;
+  user-select: none;
+}
+thead tr.col-headers th:last-child { border-right: none; }
+thead tr.filter-row th {
+  background: #FAFAFA; border-bottom: 1px solid var(--border); padding: 4px 6px;
+}
+thead tr.filter-row th input {
+  width: 100%; height: 22px; padding: 0 6px;
+  border: 1px solid var(--border); border-radius: var(--r-sm);
+  font-size: 11px; color: var(--text-dark); background: var(--white);
+}
+thead tr.filter-row th input::placeholder { color: #BBBBBB; }
+
+tbody tr { border-bottom: 1px solid #EFEFEF; cursor: pointer; transition: background 0.1s; }
+tbody tr:nth-child(even) { background: #FAFAFA; }
+tbody tr:hover    { background: var(--blue-subtle); }
+tbody tr.selected { background: #E6EEFF !important; }
+tbody td {
+  padding: 0 10px; height: 36px; font-size: 12px; color: var(--text-dark);
+  border-right: 1px solid #EFEFEF; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+tbody td:last-child { border-right: none; }
+
+/* Status: dot + plain text (table, drawer) */
+.status-cell { display: inline-flex; align-items: center; gap: 6px; }
+.status-dot  { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+/* ── Table Footer ── */
+#table-footer {
+  padding: 6px 14px; background: var(--white); border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--text-light);
+}
+#table-footer strong { color: var(--text-dark); }
+
+/* ── Side Drawer ── */
+#side-drawer {
+  width: 0; overflow: hidden;
+  background: var(--white); border-left: 1px solid var(--border);
+  display: flex; flex-direction: column; transition: width 0.25s ease;
+}
+#side-drawer.open { width: var(--drawer-w); }
+
+.drawer-header {
+  padding: 16px 20px 14px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 10px; flex-shrink: 0;
+}
+.drawer-header-text { flex: 1; min-width: 0; }
+.drawer-header-text h2 { font-size: 22px; font-weight: 700; color: var(--text-dark); line-height: 1.2; margin-bottom: 5px; }
+.drawer-subtitle { font-size: 13px; color: var(--text-mid); overflow: hidden; text-overflow: ellipsis; }
+.drawer-close {
+  background: none; border: none; cursor: pointer; padding: 8px 10px;
+  color: var(--text-dark); font-size: 30px; line-height: 1; flex-shrink: 0;
+  border-radius: var(--r-sm); transition: background 0.1s;
+}
+.drawer-close:hover { background: var(--page-bg); }
+
+.drawer-body { flex: 1; overflow-y: auto; }
+
+.drawer-section { border-bottom: 1px solid var(--border); padding: 16px 20px; }
+.drawer-section:last-child { border-bottom: none; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.section-title { font-size: 11px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.07em; }
+
+.meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
+.meta-label { font-size: 11px; color: var(--text-light); margin-bottom: 2px; }
+.meta-value { font-size: 13px; color: var(--text-dark); font-weight: 500; }
+
+/* Drawer content */
+.dc-section { padding: 16px 20px; }
+.dc-heading { font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 6px; }
+.dc-section-desc { font-size: 13px; color: var(--text-mid); margin: 0 0 12px; }
+.dc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.dc-table th {
+  background: var(--page-bg); border: 1px solid var(--border-mid);
+  padding: 7px 10px; text-align: left; font-size: 12px; font-weight: 600;
+  color: var(--text-dark); white-space: nowrap; user-select: none;
+}
+.dc-col-icon { color: var(--border-mid); margin-left: 6px; font-size: 13px; }
+.dc-table td { border: 1px solid var(--border); padding: 7px 10px; font-size: 13px; color: var(--text-dark); }
+.dc-table .col-owner { font-weight: 700; }
+.dc-list { list-style: none; padding: 0; margin: 0; }
+.dc-list li {
+  display: flex; align-items: baseline; gap: 7px;
+  font-size: 13px; color: var(--text-dark); padding: 2px 0;
+}
+.dc-list li::before { content: '·'; font-size: 18px; line-height: 1; color: var(--text-dark); flex-shrink: 0; }
+.dc-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+.dc-notes p { font-size: 13px; color: var(--text-dark); margin: 12px 0 5px; }
+.dc-notes p:first-child { margin-top: 0; }
+.dc-notes .dc-list { margin-bottom: 4px; }
+
+.record-link {
+  color: var(--blue); text-decoration: none; cursor: pointer;
+  border-bottom: 1px solid transparent; transition: border-color 0.1s;
+}
+.record-link:hover { border-bottom-color: var(--blue); }
+
+/* ── Toast ── */
+#toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: #222; color: #FFF; padding: 10px 20px; border-radius: var(--r-pill);
+  font-size: 13px; opacity: 0; transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none; z-index: 9999; white-space: nowrap;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+#concept-note { position: fixed; bottom: 8px; right: 12px; font-size: 10px; color: #C8C8C8; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div id="topbar">
+  <button class="hamburger" onclick="toggleNav()" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+  <img class="cvs-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHsAAAAeCAYAAAAM/mGWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAlmVYSWZNTQAqAAAACAAGARIAAwAAAAEAAQAAARoABQAAAAEAAABWARsABQAAAAEAAABeASgAAwAAAAEAAgAAATEAAgAAAAYAAABmh2kABAAAAAEAAABsAAAAAAAAAEgAAAABAAAASAAAAAFGaWdtYQAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAe6ADAAQAAAABAAAAHgAAAAAphLyLAAAACXBIWXMAAAsTAAALEwEAmpwYAAABwGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNi4wLjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgICAgICAgICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIj4KICAgICAgICAgPHRpZmY6T3JpZW50YXRpb24+MTwvdGlmZjpPcmllbnRhdGlvbj4KICAgICAgICAgPHhtcDpDcmVhdG9yVG9vbD5GaWdtYTwveG1wOkNyZWF0b3JUb29sPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4Kc6r2JgAABxRJREFUaAXtmc9PVFcUx++AqdTGMtTG0kbDkCaNm0bYsRN37IC/AFjpTly6Ev8CceUSXLICd7ACdpA0AWqTQhMzUBMLtmZAjTpWOz2fmzmTM3fee0wcapqZd5I399c55957vveec96bTEnIpdQSFmhriV2mm/QWSMFuoYOQgp2C3UIWaKGtpjc7BbuFLNBCWz2VtNdn9+65p1NT7nQu576fn3efSan0ZnPT7U5MuPeHh+7r8XH37e3bOlRTvtvddQei62hhwRWlDrVns+5MX587J7LnxsYcPE/v3PFj+nPx7l3Pp+1DkT98+FCbfj3fybwvV1Yca2VNqh/dn8vDuF33HZljt7wGFI3J3IODgxWds7OzbnV1tdJmDJ6TpkOx282bN73apDk2ZU/3ZG/Q8PCwGxkZ8fWP+uE9O4oE5NJPzlWen3O5UjGf96yvNzZKG9lsZQw++KPoYHq6htfqpb4zOFh6XyjU8P05O1ulMj8+XjXnvugO1xnqps0alKal3tfXx7eFkhiutLy8rEO+nJmZKYnxK+O0/wsqyH7HZT9ZsSNlHOXF5oyz3qkYG8fJhv0u7KAdZ0AAL8zP14CiBg4Bh1fHjit/n5ws8Vg+2paY347/JUDYdlJdDyr6MBrGw5BRxAFgPDwIUbyN9uVkTxbshYWFEn3h2k4C7JoE7Q9xcwKa6K4lXO3j0VH3QVxQFCGHO1V6UnZT2iYc4JpzMzPefWs/5bPpaXf2yhXb5XDbSrhq5lfCTb/e2tKmLwkJfYWC+zGfd2eNa2awYNx/ldD/rCE3virMnOTyamJ2HND1Tiou052/ccPHUQsO8j8sL1fiJ8AwDohKxb09H6P1MDFODOaQhMB+JfLEaEsaszkI5BjkE0qnJEdolIj1xE/iKCQ30N2WnIAyJPhWZG/EZuWj/rB86Ii/Ek6qxFSGTuri4r1+y4ROxlTvDbF1qMfy23rNzcZQjRDAQC9NkkMbvTZRoo/kiVuuz5dyszkEllQPyZ2lLjEWCZil1wLCr/397lFvr08eX8kaMsLAmkgIQwK8qAdDhvTgwQPXL7oBmoSKB9lemQvjKyEL3+TkpAcLPgg+EjIJIV5H1Bziuj2I8Ou6qCuRPI6KZ+XwoJe1MJe4fmVJLsOYQ2x7FMTGpFhox5DT2JgPkimSsHrohcRLqxM9JG+2T3XRX89aw1xCY7ZYxsfmuFJjNvETHrnFNVsQUP2YxlhNpjYkibVEW+dRXsYFuKqYTUIIn+WBjz54w34B3Sd58BxHbaKkirh9uFu9oVWDCQ34rZtOYE0cItbaW0jc1tutgryqQfAxJ94gyU2HuYTqETCdGK/mEYMriy/VpXIrQ8KN4265+dxWbp8AXuNacbXc9kaI28yttoRO5tXQYsfCek3MhkEB/+3q1cp7ayho21FAhy5W33+tHPHaAnnm8mWXlfdIwCNhg4jfWldZm3yxVsKAk0cPxivRi0u3pLmE7cNwofEYD/vUkBPyXSGOcLvKRzyOosuyv0YoXBe6Ojs7vcqosBDOFQk2TPUCHgU08gBnSZMxCxSZu824L5QBzoqxLMA2iUOetUF8qNFkjjZyF8sfHfj48th8gAiTRfjrJW4uFGVs+rldAKl89EVRV1dXVPcn64sFmxUcB3gc0MgCCuP2RvPF7RsxTLucRm60BRoZki4IWVy0BdIPyI+6cNrcYKuDJO6CvNqxbsYsNZJ4Ksi47CTS27Ulr4RRX7oW6k2kkiZpYKztOFkFHOAsJQGtfD1B7ON2PRGwAf25xDZLuG7mUgqzcu23noFXPEu4bkLPL729DrdtqTPGtVqeuDpuGSD51BoSr0Jk2gDJzSauylc6n01bXtz8pwCbUMI67RuCrqNdko4pbcSV3DJi6ZG4Rm5bPUCjCz4SpxdLS3GqfT8AEnfbOjoqfNSfS9JjCb7zcliU9ADyipVEXn/5cGEIjL6/v+/29vZcd3d3lXsmwSLZ2t7e9uOZTKZyS5FFRhMi+G7duuWuXbvmrl+/7pcA2HNzc14HvMzDuzXxPif2oI1O5uXhO/zi4qIrFot+HCXoRXZnZ8f3ARyHSknfq+mDF4DRyWFbW1tzHWI72pcuXfJ1lasLbJgV8DfiosI/RVRZVPnFwID/o+TD0ZHLCMPfslmIQ8AY79oX5SZYoBk/LYZ5JxvG/eqDC++QDVgCyC45iP+Isax+5JFT/SqDi4UwGEahzAmvEoY7ODjw/Rivp6fH1wGRB3AAk/Lt27fu/v37PvtWeWRw4YCF4ZfkoHM44BsaGvIgIAcQzDsgNmA+5kU/bfrX19e9HDIcFtaJbkCED0KGA6HgI8cY+uHVfs8sPxnezbSRls1tgbbm3l66O2uBFGxrjSavp2A3OcB2eynY1hpNXk/BbnKA7fZSsK01mryegt3kANvtpWBbazR5/V+qfEB0EfpduQAAAABJRU5ErkJggg==" alt="CVSHealth" />
+  <span class="topbar-sep">|</span>
+  <span class="topbar-app">CBR</span>
+  <div class="topbar-spacer"></div>
+  <span class="topbar-user">Welcome, Sally Smith (Manager)</span>
+  <span class="topbar-sep">|</span>
+  <button class="topbar-signout" onclick="toast('Sign out — not available in prototype')">Sign out</button>
+</div>
+
+<!-- App Body -->
+<div id="app-body">
+
+  <!-- Left Nav -->
+  <nav id="left-nav" aria-label="Main navigation">
+
+    <!-- Hide Menu -->
+    <button class="nav-hide" onclick="toggleNav()" aria-label="Hide navigation menu">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Hide Menu
+    </button>
+
+    <!-- Home -->
+    <button class="nav-item" onclick="toast('Home — not available in prototype')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M2 7L8 2l6 5v7a1 1 0 01-1 1H3a1 1 0 01-1-1V7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+        <path d="M6 14V9h4v5" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+      </svg>
+      Home
+    </button>
+
+    <!-- New Implementation -->
+    <button class="nav-item" onclick="toast('New Implementation — not available in prototype')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/>
+        <path d="M8 5v6M5 8h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      New Implementation
+    </button>
+
+    <!-- Maintenance of Business (parent) -->
+    <button class="nav-parent"
+      id="nav-mob-toggle"
+      aria-expanded="true"
+      aria-controls="nav-mob-children"
+      onclick="toggleMobNav()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/>
+        <rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/>
+        <rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/>
+        <rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/>
+      </svg>
+      <span class="nav-label">Maintenance of Business</span>
+      <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+        <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <!-- Children -->
+    <div class="nav-children open" id="nav-mob-children" role="list">
+      <button class="nav-child" aria-current="page" role="listitem"
+        onclick="toast('Workbench — current page')">
+        Workbench
+      </button>
+      <button class="nav-child" role="listitem"
+        onclick="toast('QC Queue — not available in prototype')">
+        QC Queue
+      </button>
+    </div>
+
+    <!-- Broker Payments -->
+    <button class="nav-item" onclick="toast('Broker Payments — not available in prototype')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect x="1" y="3" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
+        <path d="M1 6h14" stroke="currentColor" stroke-width="1.3"/>
+        <path d="M4 10h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      Broker Payments
+    </button>
+
+    <!-- Material Codes -->
+    <button class="nav-item" onclick="toast('Material Codes — not available in prototype')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M3 4h10M3 8h10M3 12h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      Material Codes
+    </button>
+
+    <!-- Reports -->
+    <button class="nav-item" onclick="toast('Reports — not available in prototype')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M2 13V8M6 13V5M10 13V3M14 13V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      Reports
+    </button>
+
+  </nav>
+
+  <!-- Main Content -->
+  <main id="main-content">
+
+    <!-- Page Header -->
+    <div id="page-header">
+      <h1>Maintenance of Business</h1>
+      <span class="last-updated">Last updated: Today at 8:42 AM</span>
+    </div>
+
+    <!-- Workbench Body -->
+    <div id="workbench-body">
+      <div id="workbench-left">
+
+    <!-- Status Cards -->
+    <div id="status-cards">
+      <div class="status-card card-all active" onclick="filterByStatus('all',this)">
+        <div class="card-title-row">
+          <svg class="card-clock" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="9" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M11 6.5v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="card-title">All Work</span>
+        </div>
+        <a class="card-view">View 10</a>
+      </div>
+      <div class="status-card card-triage" onclick="filterByStatus('Triage',this)">
+        <div class="card-title-row"><span class="card-dot dot-triage"></span><span class="card-title">Triage</span></div>
+        <a class="card-view">View 1</a>
+      </div>
+      <div class="status-card card-scheduled" onclick="filterByStatus('Scheduled',this)">
+        <div class="card-title-row"><span class="card-dot dot-scheduled"></span><span class="card-title">Scheduled</span></div>
+        <a class="card-view">View 2</a>
+      </div>
+      <div class="status-card card-workable" onclick="filterByStatus('Workable',this)">
+        <div class="card-title-row"><span class="card-dot dot-workable"></span><span class="card-title">Workable</span></div>
+        <a class="card-view">View 3</a>
+      </div>
+      <div class="status-card card-pending" onclick="filterByStatus('Pending',this)">
+        <div class="card-title-row"><span class="card-dot dot-pending"></span><span class="card-title">Pending</span></div>
+        <a class="card-view">View 2</a>
+      </div>
+      <div class="status-card card-rfc" onclick="filterByStatus('RFC',this)">
+        <div class="card-title-row"><span class="card-dot dot-rfc"></span><span class="card-title">RFC</span></div>
+        <a class="card-view">View 2</a>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div id="content-area">
+
+      <!-- Table Section -->
+      <div id="table-section">
+
+        <!-- Table -->
+        <div id="table-wrap">
+          <table id="work-table">
+            <thead>
+              <tr class="col-headers">
+                <th style="width:86px">FAF ID</th>
+                <th style="width:152px">Account Name</th>
+                <th style="width:100px">LOB</th>
+                <th style="width:106px">Pricing Eff.</th>
+                <th style="width:106px">FAF Owner</th>
+                <th style="width:106px">Status</th>
+                <th style="width:148px">Reason</th>
+                <th style="width:60px">Days</th>
+              </tr>
+              <tr class="filter-row">
+                <th><input id="fi-faf"    placeholder="FAF…"     oninput="applyFilters()"></th>
+                <th><input id="fi-acct"   placeholder="Account…" oninput="applyFilters()"></th>
+                <th><input id="fi-lob"    placeholder="LOB…"     oninput="applyFilters()"></th>
+                <th><input id="fi-date"   placeholder="Date…"    oninput="applyFilters()"></th>
+                <th><input id="fi-owner"  placeholder="Owner…"   oninput="applyFilters()"></th>
+                <th><input id="fi-status" placeholder="Status…"  oninput="applyFilters()"></th>
+                <th><input id="fi-reason" placeholder="Reason…"  oninput="applyFilters()"></th>
+                <th><input id="fi-days"   placeholder="#…"       oninput="applyFilters()"></th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+        <div id="table-footer">Rows: <strong id="row-count">10</strong></div>
+      </div>
+
+      </div><!-- /content-area -->
+      </div><!-- /workbench-left -->
+
+      <!-- Side Drawer -->
+      <div id="side-drawer">
+        <div class="drawer-header">
+          <div class="drawer-header-text">
+            <h2>Historical Context</h2>
+            <div class="drawer-subtitle" id="drawer-subtitle">No item selected</div>
+          </div>
+          <button class="drawer-close" onclick="closeDrawer()" aria-label="Close">×</button>
+        </div>
+        <div class="drawer-body" id="drawer-body"></div>
+      </div>
+
+    </div><!-- /workbench-body -->
+  </main>
+</div><!-- /app-body -->
+
+<div id="toast"></div>
+<div id="concept-note">Concept prototype using synthetic project data</div>
+
+<script>
+// ── Data ──
+const workItems = [
+  { id:1,  fafId:'48901', account:'Coastal Employers Group',   lob:'Commercial', pricingEff:'01/01/2026', owner:'J. Patel',  status:'Workable',  reason:'Fee Schedule',      days:14, hasHistory:true  },
+  { id:2,  fafId:'49234', account:'Meridian Health Partners',  lob:'EGWP',       pricingEff:'01/01/2026', owner:'S. Okafor', status:'Triage',    reason:'—',                 days:3,  hasHistory:true  },
+  { id:3,  fafId:'49512', account:'Summit Benefits Inc.',      lob:'Med-D',      pricingEff:'07/01/2025', owner:'J. Patel',  status:'RFC',       reason:'Billing Frequency', days:28, hasHistory:false },
+  { id:4,  fafId:'49687', account:'Alliance Group Services',   lob:'Commercial', pricingEff:'01/01/2026', owner:'R. Huang',  status:'Workable',  reason:'No Release',        days:7,  hasHistory:true  },
+  { id:5,  fafId:'49843', account:'Northgate Insurance Co.',   lob:'EGWP',       pricingEff:'01/01/2026', owner:'S. Okafor', status:'Pending',   reason:'—',                 days:12, hasHistory:true  },
+  { id:6,  fafId:'50012', account:'Lakeview Employers Group',  lob:'Commercial', pricingEff:'01/01/2026', owner:'R. Huang',  status:'Scheduled', reason:'Fee Schedule',      days:5,  hasHistory:false },
+  { id:7,  fafId:'50198', account:'Pinnacle Benefits LLC',     lob:'Med-D',      pricingEff:'01/01/2026', owner:'J. Patel',  status:'Workable',  reason:'—',                 days:9,  hasHistory:true  },
+  { id:8,  fafId:'50341', account:'Harbor Point Group',        lob:'Commercial', pricingEff:'07/01/2026', owner:'T. Cruz',   status:'RFC',       reason:'No Release',        days:31, hasHistory:true  },
+  { id:9,  fafId:'50489', account:'Westfield Health Corp.',    lob:'EGWP',       pricingEff:'01/01/2026', owner:'T. Cruz',   status:'Pending',   reason:'Billing Frequency', days:16, hasHistory:true  },
+  { id:10, fafId:'50623', account:'Greenfield Associates',     lob:'Commercial', pricingEff:'01/01/2026', owner:'S. Okafor', status:'Scheduled', reason:'—',                 days:4,  hasHistory:false },
+];
+
+let selectedId    = null;
+let filteredItems = [...workItems];
+
+function statusDotClass(s) {
+  return { Workable:'dot-workable', Triage:'dot-triage', Scheduled:'dot-scheduled',
+           Pending:'dot-pending', RFC:'dot-rfc' }[s] || '';
+}
+
+// ── Render ──
+function renderTable(items) {
+  const tbody = document.getElementById('table-body');
+  if (!items.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-light);padding:24px">No matching work items.</td></tr>';
+    document.getElementById('row-count').textContent = '0';
+    return;
+  }
+  tbody.innerHTML = items.map(w => `
+    <tr data-id="${w.id}" class="${selectedId===w.id?'selected':''}" onclick="selectRow(${w.id})">
+      <td><span class="faf-cell"><a class="faf-link" onclick="event.stopPropagation();openWorkItem(${w.id})">${w.fafId}</a>${w.hasHistory?`<button class="history-btn" title="View historical context" aria-label="View historical context for FAF ${w.fafId}" onclick="event.stopPropagation();openDrawerForItem(${w.id})"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5.2" stroke="currentColor" stroke-width="1.2"/><path d="M6.5 4v2.8l1.8 1.1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`:''}</span></td>
+      <td title="${w.account}">${w.account}</td>
+      <td>${w.lob}</td>
+      <td>${w.pricingEff}</td>
+      <td>${w.owner}</td>
+      <td><span class="status-cell"><span class="status-dot ${statusDotClass(w.status)}"></span>${w.status}</span></td>
+      <td style="color:var(--text-mid)">${w.reason}</td>
+      <td style="text-align:right;padding-right:14px">${w.days}</td>
+    </tr>`).join('');
+  document.getElementById('row-count').textContent = items.length;
+}
+
+// ── Row selection ──
+function selectRow(id) {
+  selectedId = id;
+  renderTable(filteredItems);
+  const drawer = document.getElementById('side-drawer');
+  if (drawer.classList.contains('open')) {
+    const w = workItems.find(x => x.id === id);
+    if (w && w.hasHistory) { populateDrawer(id); }
+    else { closeDrawer(); }
+  }
+}
+
+// ── Nav ──
+function toggleNav() {
+  document.getElementById('left-nav').classList.toggle('collapsed');
+}
+
+function toggleMobNav() {
+  const toggle   = document.getElementById('nav-mob-toggle');
+  const children = document.getElementById('nav-mob-children');
+  const expanded = toggle.getAttribute('aria-expanded') === 'true';
+  toggle.setAttribute('aria-expanded', String(!expanded));
+  children.classList.toggle('open', !expanded);
+}
+
+// ── Status card filter ──
+function filterByStatus(status, el) {
+  document.querySelectorAll('.status-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('fi-status').value = status === 'all' ? '' : status;
+  applyFilters();
+}
+
+// ── Column filters ──
+function applyFilters() {
+  const v = id => document.getElementById(id).value.trim().toLowerCase();
+  const faf=v('fi-faf'), acct=v('fi-acct'), lob=v('fi-lob'), date=v('fi-date'),
+        own=v('fi-owner'), sts=v('fi-status'), rsn=v('fi-reason'), dys=v('fi-days');
+
+  filteredItems = workItems.filter(w =>
+    (!faf  || w.fafId.toLowerCase().includes(faf))  &&
+    (!acct || w.account.toLowerCase().includes(acct)) &&
+    (!lob  || w.lob.toLowerCase().includes(lob))    &&
+    (!date || w.pricingEff.toLowerCase().includes(date)) &&
+    (!own  || w.owner.toLowerCase().includes(own))  &&
+    (!sts  || w.status.toLowerCase().includes(sts)) &&
+    (!rsn  || w.reason.toLowerCase().includes(rsn)) &&
+    (!dys  || String(w.days).includes(dys))
+  );
+  renderTable(filteredItems);
+}
+
+function clearFilters() {
+  ['fi-faf','fi-acct','fi-lob','fi-date',
+   'fi-owner','fi-status','fi-reason','fi-days'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.querySelectorAll('.status-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.status-card')[0].classList.add('active');
+  filteredItems = [...workItems];
+  renderTable(filteredItems);
+}
+
+// ── Drawer ──
+function openDrawerForItem(id) {
+  selectedId = id;
+  renderTable(filteredItems);
+  populateDrawer(id);
+  document.getElementById('side-drawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('side-drawer').classList.remove('open');
+  selectedId = null;
+  renderTable(filteredItems);
+}
+
+// ── Open Work Item (FAF ID link) ──
+function openWorkItem(id) {
+  const w = workItems.find(x => x.id === (id ?? selectedId));
+  if (!w) return;
+  toast(`Opening FAF ${w.fafId} — ${w.account} (not implemented in prototype)`);
+}
+
+// ── Populate Drawer ──
+function populateDrawer(id) {
+  const w = workItems.find(x => x.id === id);
+
+  document.getElementById('drawer-subtitle').textContent =
+    `FAF ${w.fafId}  ·  ${w.account}`;
+
+  document.getElementById('drawer-body').innerHTML = `
+    <div class="dc-section">
+      <h3 class="dc-heading">Related Project History</h3>
+      <p class="dc-section-desc">Historical records associated with this account.</p>
+      <table class="dc-table">
+        <thead>
+          <tr>
+            <th>FAF<span class="dc-col-icon">⋮</span></th>
+            <th class="col-owner">Owner<span class="dc-col-icon">⋮</span></th>
+            <th>Pricing Eff<span class="dc-col-icon">⋮</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a class="record-link" onclick="toast('Opening FAF 47821 — not available in prototype')">47821</a></td>
+            <td class="col-owner">A. Reyes</td><td>01/01/2026</td>
+          </tr>
+          <tr>
+            <td><a class="record-link" onclick="toast('Opening FAF 52997 — not available in prototype')">52997</a></td>
+            <td class="col-owner">A. Reyes</td><td>10/01/2025</td>
+          </tr>
+          <tr>
+            <td><a class="record-link" onclick="toast('Opening FAF 45054 — not available in prototype')">45054</a></td>
+            <td class="col-owner">D. Singh</td><td>01/01/2024</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="dc-section">
+      <h3 class="dc-heading">Why these records were matched</h3>
+      <ul class="dc-list">
+        <li>Same client</li>
+        <li>Same account name</li>
+      </ul>
+    </div>
+
+    <hr class="dc-divider">
+
+    <div class="dc-section">
+      <h3 class="dc-heading">Considerations</h3>
+      <div class="dc-notes">
+        <p><a class="record-link" onclick="toast('Opening FAF 47821 — not available in prototype')">FAF 47821</a> contains:</p>
+        <ul class="dc-list">
+          <li>Custom billing frequency setup</li>
+          <li>Additional fee schedule entries</li>
+        </ul>
+        <p><a class="record-link" onclick="toast('Opening FAF 52997 — not available in prototype')">FAF 52997</a> contains:</p>
+        <ul class="dc-list">
+          <li>Custom fee schedule notes</li>
+        </ul>
+        <p><a class="record-link" onclick="toast('Opening FAF 45054 — not available in prototype')">FAF 45054</a> contains:</p>
+        <ul class="dc-list">
+          <li>Custom billing frequency setup</li>
+          <li>Escalating pricing</li>
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
+// ── Toast ──
+let _tt;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(_tt); _tt = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+// ── Init ──
+renderTable(workItems);
+</script>
+</body>
+</html>
