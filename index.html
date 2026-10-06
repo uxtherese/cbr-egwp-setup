@@ -389,8 +389,8 @@
     }
     .date-input:focus { border: none; background: #fff; outline: none; }
     .date-input:disabled { border: none; background: #f2efeb; color: #474644; cursor: not-allowed; }
-    .date-input::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
-    .date-input:disabled::-webkit-calendar-picker-indicator { opacity: 0.3; cursor: not-allowed; }
+    .date-input::-webkit-calendar-picker-indicator { width:16px; height:16px; cursor:pointer; background-image:url("images/calendar--s.svg"); background-size:contain; background-repeat:no-repeat; background-position:center; opacity:1; }
+    .date-input:disabled::-webkit-calendar-picker-indicator { background-image:url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M9 14H7V12H9V14Z' fill='%23767471'/%3E%3Cpath d='M11 14H13V12H11V14Z' fill='%23767471'/%3E%3Cpath d='M17 14H15V12H17V14Z' fill='%23767471'/%3E%3Cpath d='M7 18H9V16H7V18Z' fill='%23767471'/%3E%3Cpath d='M13 18H11V16H13V18Z' fill='%23767471'/%3E%3Cpath d='M15 18H17V16H15V18Z' fill='%23767471'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M7 2V4H4C2.89543 4 2 4.89543 2 6V20C2 21.1046 2.89543 22 4 22H20C21.1046 22 22 21.1046 22 20V6C22 4.89543 21.1046 4 20 4H17V2H15V4H9V2H7ZM4 6V8H20V6H4ZM4 10V20H20V10H4Z' fill='%23767471'/%3E%3C/svg%3E"); cursor:not-allowed; }
 
     /* ── CHECKBOX ─────────────────────────────────────── */
     input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 16px; height: 16px; border: 2px solid #1a1a19; border-radius: 4px; background: #fff; cursor: pointer; position: relative; flex-shrink: 0; vertical-align: middle; display: inline-flex; align-items: center; justify-content: center; }
@@ -446,8 +446,8 @@
     .as-fi[type="date"] { font-family:inherit; font-size:14px; font-weight:400; color:var(--text-primary); }
     .as-fi[type="date"]::-webkit-datetime-edit { font-family:inherit; font-size:14px; font-weight:400; color:var(--text-primary); }
     .as-fi[type="date"]::-webkit-datetime-edit-fields-wrapper { font-family:inherit; }
-    .as-fi[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
-    .as-fi[type="date"]:disabled::-webkit-calendar-picker-indicator { opacity: 0.3; cursor: not-allowed; }
+    .as-fi[type="date"]::-webkit-calendar-picker-indicator { width:16px; height:16px; cursor:pointer; background-image:url("images/calendar--s.svg"); background-size:contain; background-repeat:no-repeat; background-position:center; opacity:1; }
+    .as-fi[type="date"]:disabled::-webkit-calendar-picker-indicator { background-image:url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M9 14H7V12H9V14Z' fill='%23767471'/%3E%3Cpath d='M11 14H13V12H11V14Z' fill='%23767471'/%3E%3Cpath d='M17 14H15V12H17V14Z' fill='%23767471'/%3E%3Cpath d='M7 18H9V16H7V18Z' fill='%23767471'/%3E%3Cpath d='M13 18H11V16H13V18Z' fill='%23767471'/%3E%3Cpath d='M15 18H17V16H15V18Z' fill='%23767471'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M7 2V4H4C2.89543 4 2 4.89543 2 6V20C2 21.1046 2.89543 22 4 22H20C21.1046 22 22 21.1046 22 20V6C22 4.89543 21.1046 4 20 4H17V2H15V4H9V2H7ZM4 6V8H20V6H4ZM4 10V20H20V10H4Z' fill='%23767471'/%3E%3C/svg%3E"); cursor:not-allowed; }
     select.as-fi { -webkit-appearance:none; appearance:none; padding-right:28px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M0 0 L8 0 L4 5 Z' fill='%231a1a19'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; cursor:pointer; }
     select.as-fi:disabled { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M0 0 L8 0 L4 5 Z' fill='%23767471'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; cursor:not-allowed; }
     .as-fi.wide { min-width:0; }
