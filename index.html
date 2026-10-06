@@ -1248,10 +1248,10 @@
       // Dates: editable in 301 and WRAP; read-only in 231
       const dateEditable = is301 || isWrap;
       const fromCell = dateEditable
-        ? '<td><input type="date" class="date-input" value="' + displayToIso(row.validFrom) + '" onchange="onDateChange(\'' + activeAR + '\', ' + row.id + ', \'validFrom\', this.value)"></td>'
+        ? '<td><input type="date" class="date-input" title="Calendar not available in prototype" value="' + displayToIso(row.validFrom) + '" onchange="onDateChange(\'' + activeAR + '\', ' + row.id + ', \'validFrom\', this.value)"></td>'
         : '<td>' + (row.validFrom || '') + '</td>';
       const toCell = dateEditable
-        ? '<td><input type="date" class="date-input" value="' + displayToIso(row.validTo) + '" onchange="onDateChange(\'' + activeAR + '\', ' + row.id + ', \'validTo\', this.value)"></td>'
+        ? '<td><input type="date" class="date-input" title="Calendar not available in prototype" value="' + displayToIso(row.validTo) + '" onchange="onDateChange(\'' + activeAR + '\', ' + row.id + ', \'validTo\', this.value)"></td>'
         : '<td>' + (row.validTo || '') + '</td>';
 
       // Amounts: editable inline for 301 and WRAP; static for 231
@@ -1885,7 +1885,7 @@
       div.innerHTML =
         '<label class="drawer-field-label" for="' + fid + '">' + d.label + '</label>' +
         '<div class="field-wrap">' +
-          '<input class="drawer-input' + (d.icon ? '' : ' no-icon') + '" type="' + d.type + '" id="' + fid + '" placeholder="' + d.placeholder + '" oninput="syncApplyButton()">' +
+          '<input class="drawer-input' + (d.icon ? '' : ' no-icon') + '" type="' + d.type + '" id="' + fid + '" placeholder="' + d.placeholder + '"' + (d.type === 'date' ? ' title="Calendar not available in prototype"' : '') + ' oninput="syncApplyButton()">' +
           (d.icon ? '<span class="field-icon">' + d.icon + '</span>' : '') +
         '</div>';
       container.appendChild(div);
@@ -2640,6 +2640,7 @@
             var inp = document.createElement('input');
             inp.type      = 'date';
             inp.className = 'date-input';
+            inp.title     = 'Calendar not available in prototype';
             inp.value     = displayToIso(dateVal);
             inp.addEventListener('change',
               (function(k, id, fld, ar) {
@@ -3275,7 +3276,7 @@
     // 301 — daily indicator + eff date (Invoice at Month End removed)
     h += '<div class="as-fields-row" style="align-items:flex-end;">' +
          '<label class="as-check-item"><input type="checkbox" checked> Daily Indicator</label>' +
-         _asF('Daily Eff Date', '<input class="as-fi" style="width:145px" type="date" value="2027-01-01">') +
+         _asF('Daily Eff Date', '<input class="as-fi" style="width:145px" type="date" title="Calendar not available in prototype" value="2027-01-01">') +
          '</div>';
 
     h += '<hr class="as-divider">';
@@ -3311,7 +3312,7 @@
     // WRAP — daily indicator + eff date (Invoice at Month End removed)
     h += '<div class="as-fields-row" style="align-items:flex-end;">' +
          '<label class="as-check-item"><input type="checkbox" checked> Daily Indicator</label>' +
-         _asF('Daily Eff Date', '<input class="as-fi" style="width:145px" type="date" value="2027-01-01">') +
+         _asF('Daily Eff Date', '<input class="as-fi" style="width:145px" type="date" title="Calendar not available in prototype" value="2027-01-01">') +
          '</div>';
 
     // ── PAYMENT STRUCTURE ───────────────────────────────────────────────────
