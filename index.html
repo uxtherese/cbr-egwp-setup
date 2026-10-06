@@ -1051,12 +1051,12 @@
       fafName: 'Employers Health Purchasing Corp of Ohio',
       tabLabel: '301 AR / A91AF',
       rows: [
-        { id:1, feeType:'Retail Per Claim',      codes:['F1','F2','FE'], fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$0.00',  brokerAmt:'',           validFrom:'12/31/2026', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true  },
-        { id:2, feeType:'Paper Per Claim',        codes:['FP'],           fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$1.50',  brokerAmt:'',           validFrom:'12/31/2026', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true  },
-        { id:3, feeType:'Mail Per Claim',         codes:['FM'],           fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$0.00',  brokerAmt:'',           validFrom:'12/31/2026', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true  },
-        { id:4, feeType:'Per Member Per Month',   codes:['PM'],           fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$2.25',  brokerAmt:'',           validFrom:'01/01/2027', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:false },
-        { id:5, feeType:'Flat Annually',          codes:['BAF'],          fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$0.00',  brokerAmt:'$10,666.00', validFrom:'01/01/2027', validTo:'', billRemit:'true',  lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:true,  perClaimsEligible:false },
-        { id:6, feeType:'Per Member Per Month',   codes:['PP'],           fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$2.25',  brokerAmt:'',           validFrom:'01/01/2027', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:false }
+        { id:1, feeType:'Retail Per Claim',      codes:['F1','F2','FE'], fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$0.00',  brokerAmt:'',           validFrom:'12/31/2026', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true  },
+        { id:2, feeType:'Paper Per Claim',        codes:['FP'],           fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$1.50',  brokerAmt:'',           validFrom:'12/31/2026', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true  },
+        { id:3, feeType:'Mail Per Claim',         codes:['FM'],           fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$0.00',  brokerAmt:'',           validFrom:'12/31/2026', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true  },
+        { id:4, feeType:'Per Member Per Month',   codes:['PM'],           fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$2.25',  brokerAmt:'',           validFrom:'01/01/2027', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:false },
+        { id:5, feeType:'Flat Annually',          codes:['BAF'],          fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$0.00',  brokerAmt:'$10,666.00', validFrom:'01/01/2027', validTo:'12/31/9999', billRemit:'true',  lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:true,  perClaimsEligible:false },
+        { id:6, feeType:'Per Member Per Month',   codes:['PP'],           fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$2.25',  brokerAmt:'',           validFrom:'01/01/2027', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:false }
       ]
     },
     'wrap': {
@@ -1066,10 +1066,10 @@
       rows: [
         // WRAP Billing Administrative rows — pre-populated from 301 (PMPM excluded); fully independent.
         // Broker amounts are WRAP FAF-specific.
-        { id:1, feeType:'Retail Per Claim',  codes:['F1','F2','FE'], fafs:'63522', year:'All', lob:'WRAP', baseAmt:'$0.00',  brokerAmt:'',          validFrom:'12/31/2026', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true  },
-        { id:2, feeType:'Paper Per Claim',   codes:['FP'],           fafs:'63522', year:'All', lob:'WRAP', baseAmt:'$1.50',  brokerAmt:'',          validFrom:'12/31/2026', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true  },
-        { id:3, feeType:'Mail Per Claim',    codes:['FM'],           fafs:'63522', year:'All', lob:'WRAP', baseAmt:'$0.00',  brokerAmt:'',          validFrom:'12/31/2026', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true  },
-        { id:4, feeType:'Flat Annually',     codes:['BAF'],          fafs:'63522', year:'All', lob:'WRAP', baseAmt:'$0.00',  brokerAmt:'$8,400.00', validFrom:'01/01/2027', validTo:'', billRemit:'true',  lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:true,  perClaimsEligible:false }
+        { id:1, feeType:'Retail Per Claim',  codes:['F1','F2','FE'], fafs:'63522', year:'All', lob:'WRAP', baseAmt:'$0.00',  brokerAmt:'',          validFrom:'12/31/2026', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true  },
+        { id:2, feeType:'Paper Per Claim',   codes:['FP'],           fafs:'63522', year:'All', lob:'WRAP', baseAmt:'$1.50',  brokerAmt:'',          validFrom:'12/31/2026', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true  },
+        { id:3, feeType:'Mail Per Claim',    codes:['FM'],           fafs:'63522', year:'All', lob:'WRAP', baseAmt:'$0.00',  brokerAmt:'',          validFrom:'12/31/2026', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true  },
+        { id:4, feeType:'Flat Annually',     codes:['BAF'],          fafs:'63522', year:'All', lob:'WRAP', baseAmt:'$0.00',  brokerAmt:'$8,400.00', validFrom:'01/01/2027', validTo:'12/31/9999', billRemit:'true',  lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:true,  perClaimsEligible:false }
       ]
     },
     '231': {
@@ -1077,11 +1077,11 @@
       fafName: 'Employers Health Purchasing Corp of Ohio',
       tabLabel: '231 AR / 10610',
       rows: [
-        { id:1, feeType:'Retail Per Claim',    codes:['SPFE','RTFE'], fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$0.00', brokerAmt:'', validFrom:'12/31/2026', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', linkedTo301:1 },
-        { id:2, feeType:'Paper Per Claim',     codes:['PAFE'],        fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$0.00', brokerAmt:'', validFrom:'12/31/2026', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', linkedTo301:2 },
-        { id:3, feeType:'Mail Per Claim',      codes:['MLFE'],        fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$0.00', brokerAmt:'', validFrom:'12/31/2026', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', linkedTo301:3 },
-        { id:4, feeType:'Per Member Per Month',codes:['PMMD'],        fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$2.25', brokerAmt:'', validFrom:'01/01/2027', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', linkedTo301:4 },
-        { id:5, feeType:'Per Member Per Month',codes:['PMRB'],        fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$2.25', brokerAmt:'', validFrom:'01/01/2027', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', linkedTo301:6 }
+        { id:1, feeType:'Retail Per Claim',    codes:['SPFE','RTFE'], fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$0.00', brokerAmt:'', validFrom:'12/31/2026', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', linkedTo301:1 },
+        { id:2, feeType:'Paper Per Claim',     codes:['PAFE'],        fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$0.00', brokerAmt:'', validFrom:'12/31/2026', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', linkedTo301:2 },
+        { id:3, feeType:'Mail Per Claim',      codes:['MLFE'],        fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$0.00', brokerAmt:'', validFrom:'12/31/2026', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', linkedTo301:3 },
+        { id:4, feeType:'Per Member Per Month',codes:['PMMD'],        fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$2.25', brokerAmt:'', validFrom:'01/01/2027', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', linkedTo301:4 },
+        { id:5, feeType:'Per Member Per Month',codes:['PMRB'],        fafs:'59248', year:'All', lob:'EGWP', baseAmt:'$2.25', brokerAmt:'', validFrom:'01/01/2027', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', linkedTo301:6 }
       ]
     }
   };
@@ -1389,10 +1389,10 @@
     const arRows = AR_DATA[activeAR].rows;
     const newId = Math.max(...arRows.map(r => r.id)) + 1;
     if (activeAR === '301') {
-      arRows.unshift({ id:newId, feeType:'', codes:[], fafs:AR_DATA['301'].fafNumber, year:'All', lob:'EGWP', baseAmt:'$0.00', brokerAmt:'', validFrom:'', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true });
+      arRows.unshift({ id:newId, feeType:'', codes:[], fafs:AR_DATA['301'].fafNumber, year:'All', lob:'EGWP', baseAmt:'$0.00', brokerAmt:'', validFrom:'', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true });
     } else {
       // WRAP-only row: no 301 counterpart, independently maintained
-      arRows.unshift({ id:newId, feeType:'', codes:[], fafs:AR_DATA['wrap'].fafNumber, year:'All', lob:'WRAP', baseAmt:'$0.00', brokerAmt:'', validFrom:'', validTo:'', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true });
+      arRows.unshift({ id:newId, feeType:'', codes:[], fafs:AR_DATA['wrap'].fafNumber, year:'All', lob:'WRAP', baseAmt:'$0.00', brokerAmt:'', validFrom:'', validTo:'12/31/9999', billRemit:'false', lvl1:'', lvl2:'', lvl3:'', hasBrokerFee:false, perClaimsEligible:true });
     }
     hasChanges = true;
     renderTable();
