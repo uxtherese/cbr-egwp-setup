@@ -394,12 +394,12 @@
 
     /* ── CHECKBOX ─────────────────────────────────────── */
     input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 16px; height: 16px; border: 2px solid #1a1a19; border-radius: 4px; background: #fff; cursor: pointer; position: relative; flex-shrink: 0; vertical-align: middle; display: inline-flex; align-items: center; justify-content: center; }
-    input[type="checkbox"]:checked { background: #1a1a19; border-color: #1a1a19; }
-    input[type="checkbox"]:checked::after { content: ''; display: block; position: absolute; left: 2px; top: 2px; width: 9px; height: 6px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translate(1px, 2px); }
+    input[type="checkbox"]:checked { background: #1a1a19; border-color: #1a1a19; background-image: url("images/check--xs.svg"); background-repeat: no-repeat; background-position: center; background-size: 12px 12px; }
+    input[type="checkbox"]:checked::after { display: none; }
     input[type="checkbox"]:indeterminate { background: #1a1a19; border-color: #1a1a19; }
     input[type="checkbox"]:indeterminate::after { content: ''; display: block; position: absolute; left: 3px; top: 6px; width: 8px; height: 2px; background: #fff; border-radius: 1px; }
     input[type="checkbox"]:disabled { border: 1px dashed #767471; background: #f2efeb; cursor: not-allowed; }
-    input[type="checkbox"]:checked:disabled { background: #474644; border-color: #474644; cursor: not-allowed; }
+    input[type="checkbox"]:checked:disabled { background: #474644; border-color: #474644; background-image: url("images/check--xs.svg"); background-repeat: no-repeat; background-position: center; background-size: 12px 12px; cursor: not-allowed; }
 
     /* ── CONCEPT NOTES ────────────────────────────────── */
     .concept-notes { margin: 48px 24px 100px; border: 1px dashed var(--border); border-radius: 6px; background: #fafaf8; }
