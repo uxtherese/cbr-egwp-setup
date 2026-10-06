@@ -1274,7 +1274,7 @@
         checkCell +
         '<td>' + row.feeType + '</td>' +
         (is301 || isWrap
-          ? '<td class="codes-cell" onclick="openCodePicker(this,\'' + arCtx + '\',' + row.id + ',null)"><div class="codes-scroll"><div class="chip-wrap">' + (chips || '<span class="codes-placeholder">Add code…</span>') + '</div></div></td>'
+          ? '<td class="codes-cell" onclick="openCodePicker(this,\'' + arCtx + '\',' + row.id + ',null)"><div class="codes-scroll"><div class="chip-wrap">' + chips + '</div></div></td>'
           : '<td><div class="codes-scroll"><div class="chip-wrap">' + chips + '</div></div></td>') +
         statusCell +
         '<td>' + row.fafs + '</td>' +
