@@ -161,6 +161,52 @@ Reference example (Bristol-Myers Squibb):
 
 ---
 
+### Second GitHub Repo — uxtherese/cbr-egwp-setup
+- Added `uxtherese/cbr-egwp-setup` as a second remote (`uxtherese`)
+- GitHub Pages live at `https://uxtherese.github.io/cbr-egwp-setup/`
+- All pushes now go to both `origin` (CVS) and `uxtherese`
+- Push workflow requires switching gh auth accounts: `Therese-Nielsen_cvsh` for origin, `uxtherese` for uxtherese remote
+
+---
+
+### Figma MCP — Component Fidelity Workflow
+**How it works:** Paste any Internal Pulse Figma component URL into a prompt. Claude calls `get_design_context` with `disableCodeConnect: true` and reads exact design tokens (colors, sizes, states, border radii, focus colors). Use this to update specific components to match the design system.
+
+**Limitation discovered (checkbox):** `get_design_context` returns component *specs* and *sub-asset URLs*, not the assembled component. For composite shapes (a box with an embedded icon), you get the pieces separately — e.g. the checkmark SVG and the box color. Reassembling them in CSS introduces positioning error. The exported sub-asset `check--xs.svg` also carries `preserveAspectRatio="none"`, a Figma export artifact that allows the browser to distort the shape when rendered at a non-native size.
+
+**Resolution for composites:** Export the component frame directly from Figma as an SVG and use that file. It captures the final rendered shape exactly as Figma drew it, with no reassembly required.
+
+---
+
+### Checkbox — Correct Checked State
+**Problem:** The CSS border trick (`border-left` / `border-bottom` + `rotate(-45deg)`) rendered the checkmark askew. Replaced with `check--xs.svg` (Internal Pulse asset via Figma MCP) as `background-image` — also askew due to `preserveAspectRatio="none"` on the exported SVG distorting at non-native render sizes.
+
+**Resolution:** Therese exported the checkbox component frame directly from Figma as `Checkbox Frame.svg`. This SVG contains the rounded box and checkmark as a single combined path at the correct proportions. Saved to `images/checkbox-checked.svg` and used as the full visual for `:checked` state — background transparent, border transparent, `background-size: 16px 16px`.
+
+---
+
+### Date Picker — Internal Pulse Styling
+- Border removed from `.date-input` (dates live inside table cells; a border creates visual noise)
+- Calendar icon updated to Internal Pulse `calendar--s.svg` at 16px via `background-image` on `::-webkit-calendar-picker-indicator`
+- Calendar popup disabled via `pointer-events: none` on the indicator (popup is OS-rendered and cannot be CSS-styled)
+- Tooltip added to all date inputs: `title="Calendar not available in prototype"`
+- All empty Valid To dates defaulted to `12/31/9999`
+
+---
+
+### Row Selection — Date Input Background
+- Date inputs inside selected rows (`tr.row-selected .date-input`) now show `background: #cce6ff !important` to match the row highlight color
+
+---
+
+### Add Blank Row — Material Code Entry
+- Blank rows (no codes) previously had `pointer-events: none` on all cells including the codes-cell, blocking code entry
+- Fixed: changed CSS to `tr.row-no-codes td:not(.codes-cell) { pointer-events: none }` so the codes-cell remains clickable
+- Code picker opens normally; user can search and select from the `MATERIAL_CODES` list
+- If a typed search term has no match, an **"Add 'XYZ'"** option appears (teal) to add a custom code not in the list
+
+---
+
 ### Figma Make Chapter
 
 #### The Fidelity Gap
