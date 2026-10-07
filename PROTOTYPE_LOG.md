@@ -8,7 +8,7 @@
 
 ## Overview
 
-Single-file HTML prototype for the CBR (Carrier Billing & Reimbursement) EGWP Setup workflow. Covers two tabs:
+Single-file HTML prototype for the CBR (Client Billing Registration) EGWP Setup workflow. Covers two tabs:
 
 - **AR Setup** — three-AR structure (301 AR, WRAP AR, 231 AR) with Billing Structure, Payment, and Pricing Fees sections
 - **Manage Fees** — fee table with Batch Update drawer, accordion sections, pagination, and Review & Send modal

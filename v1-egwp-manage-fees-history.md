@@ -7,7 +7,7 @@
 
 ## What This File Is
 
-This is the first version of the EGWP Manage Fees tab prototype for CBR (Carrier Billing & Reimbursement). It was built as a standalone single-file HTML proof-of-concept focused entirely on the **Manage Fees** tab — the AR Setup tab did not exist yet at this stage. The subtitle "Source of Truth Concept" indicates this was used to establish the foundational data model and interaction patterns before later versions were built.
+This is the first version of the EGWP Manage Fees tab prototype for CBR (Client Billing Registration). It was built as a standalone single-file HTML proof-of-concept focused entirely on the **Manage Fees** tab — the AR Setup tab did not exist yet at this stage. The subtitle "Source of Truth Concept" indicates this was used to establish the foundational data model and interaction patterns before later versions were built.
 
 ---
 
